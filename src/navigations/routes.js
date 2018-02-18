@@ -2,10 +2,11 @@ import React from 'react';
 //import { Button } from '../components/PocketUI';
 import HomeScreen from '../containers/HomeScreen/index';
 import DashboardScreen from '../containers/DashboardScreen/index';
+import HouseHoldScreen from '../containers/HouseHoldScreen/index';
 /* import ClusterScreen from "../containers/ClusterScreen/index";
 
 import ClusterFormScreen from '../containers/ClusterFormScreen/index';
-import HouseHoldScreen from '../containers/HouseHoldScreen/index';
+
 import AddIndividualScreen from '../containers/AddIndividualScreen/index';
 import ViewClusterScreen from '../containers/ViewClusterScreen/index';
 import ViewHouseholdDetails from '../containers/ViewHouseholdDetails/index';
@@ -21,7 +22,7 @@ const Routes = {
         navigationOptions: {
             title: 'Cluster Information',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold', color: '#fff' },
-            headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 8, backgroundColor: '#4c9689' },
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
             headerLeft: null
         }
     },
@@ -30,16 +31,20 @@ const Routes = {
         navigationOptions: {
             title: 'Survey Dashboard',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
-            headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
+            headerLeft: null
+        }
+    },
+    HouseHold: {
+        screen: HouseHoldScreen,
+        navigationOptions: {
+            title: 'Add Household',
+            headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
             headerLeft: null
         }
     }
     /*
-    HouseHold: {
-        screen: HouseHoldScreen,
-        navigationOptions: {
-        }
-    },
     AddIndividual: {
         screen: AddIndividualScreen,
         navigationOptions: {

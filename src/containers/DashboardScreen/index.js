@@ -20,6 +20,7 @@ class DashboardScreen extends Component {
     }
 
     render(){
+        const { dispatch } = this.props;
         return(
             <Container style={{backgroundColor: '#e9e9e9'}}>
                 <Content style={{padding: 20}}>
@@ -33,7 +34,7 @@ class DashboardScreen extends Component {
                                 </CardItem>
                                 <CardItem footer  style={{ backgroundColor: '#4c9689' }}>
                                     <Body>
-                                        <Button transparent block>
+                                        <Button transparent block onPress={ () => { dispatch({ type: 'goToHouseHold' }) }}>
                                             <Text style={{fontSize: 16, color: '#fff'}}>Add Household</Text>
                                         </Button>
                                     </Body>
