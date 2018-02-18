@@ -24,7 +24,7 @@ class HomeScreen extends Component {
     }
 
     componentWillMount() {
-        const { dispatch } = this.props.navigation;
+        const { dispatch } = this.props;
         const activeCluster = realm.objects('Cluster').filtered('status = "active"');
         console.log("clsuter", realm.objects('Cluster').filtered('status = "active"').length);
         this.requestLocationPermission();
@@ -32,7 +32,8 @@ class HomeScreen extends Component {
             dispatch({ type: 'goToDashboard' });
         }
         else {
-            dispatch({ type: 'goToHome' });
+            //dispatch({ type: 'goToHome' });
+            return false;
         }
     }
 
