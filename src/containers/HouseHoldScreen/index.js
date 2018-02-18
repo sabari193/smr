@@ -44,7 +44,7 @@ class HouseHoldScreen extends Component{
                         </CardItem>
                         <CardItem style={{ backgroundColor: '#4c9689' }}>
                             <Body>
-                                <Button full transparent onPress={() => {dispatch({type: 'goToDashboard'})}}>
+                                <Button full transparent onPress={() => {dispatch({type: 'goToAddIndividual'})}}>
                                     <Text style={{fontSize: 20, color: '#fff'}}>Add Individual</Text>
                                 </Button>
                             </Body>                         

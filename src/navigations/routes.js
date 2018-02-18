@@ -3,11 +3,12 @@ import React from 'react';
 import HomeScreen from '../containers/HomeScreen/index';
 import DashboardScreen from '../containers/DashboardScreen/index';
 import HouseHoldScreen from '../containers/HouseHoldScreen/index';
+import AddIndividualScreen from '../containers/AddIndividualScreen/index';
 /* import ClusterScreen from "../containers/ClusterScreen/index";
 
 import ClusterFormScreen from '../containers/ClusterFormScreen/index';
 
-import AddIndividualScreen from '../containers/AddIndividualScreen/index';
+
 import ViewClusterScreen from '../containers/ViewClusterScreen/index';
 import ViewHouseholdDetails from '../containers/ViewHouseholdDetails/index';
 import EditIndividual from '../containers/EditIndividual/index';
@@ -43,14 +44,17 @@ const Routes = {
             headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
             headerLeft: null
         }
-    }
-    /*
+    },
     AddIndividual: {
         screen: AddIndividualScreen,
         navigationOptions: {
-            title: 'Add Hosuehold'
+            title: 'Add Household Individual',
+            headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
+            headerLeft: null
         }
-    },
+    }
+    /*
     ViewCluster: {
         screen: ViewClusterScreen
     },

@@ -1,4 +1,4 @@
-#Sun Feb 18 12:53:50 GMT+05:30 2018
-base.0=D\:\\newSurvey\\smr\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
+#Sun Feb 18 23:51:11 GMT+05:30 2018
+base.0=D\:\\newSurvey\\smr-git\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main
 renamed.0=classes.dex
-file.0=D\:\\newSurvey\\smr\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex
+file.0=D\:\\newSurvey\\smr-git\\android\\app\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\1f\\main\\classes.dex

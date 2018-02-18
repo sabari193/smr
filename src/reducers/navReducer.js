@@ -17,10 +17,10 @@ const navReducer = (state, action) => {
         case 'goToHouseHold':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'HouseHold' }), state);
             break;
-        /*
         case 'goToAddIndividual':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'AddIndividual' }), state);
             break;
+        /*
         case 'goToViewCluster':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'ViewCluster' }), state);
             break;
