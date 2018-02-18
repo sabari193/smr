@@ -13,6 +13,7 @@ import { Alert } from 'react-native';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import MIcon from '../../components/MIcon/index';
 import { connect } from "react-redux";
+import realm from '../../providers/realm';
 
 class DashboardScreen extends Component {
 
@@ -60,12 +61,11 @@ class DashboardScreen extends Component {
                             let householdNumberDetails = JSON.parse(JSON.stringify(realm.objects('HouseholdNumber')));
                             _.forEach(householdNumberDetails, (household) => {
                                 realm.create('HouseholdNumber', { HouseholdPrimary: household.HouseholdPrimary, Submitted: 'deleted' }, true);
-
-                                realm.create('Cluster', {
-                                    clusterPrimaryID: this.state.clusterPrimaryID,
-                                    status: 'deleted'
-                                }, true);
                             });
+                            realm.create('Cluster', {
+                                clusterPrimaryID: this.state.clusterPrimaryID,
+                                status: 'deleted'
+                            }, true);
                             realm.delete(realm.objects('RandomSurvey'));
                             realm.delete(realm.objects('SurveyDetails'));
                             this.navigateToSignIn();

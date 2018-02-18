@@ -23,7 +23,7 @@ class HomeScreen extends Component {
         super(props);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const { dispatch } = this.props.navigation;
         const activeCluster = realm.objects('Cluster').filtered('status = "active"');
         console.log("clsuter", realm.objects('Cluster').filtered('status = "active"').length);
