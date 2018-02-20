@@ -26,7 +26,7 @@ export default class RadioInput extends Component {
         return (
             <ListItem style={{marginTop: 30}}>
                 <Left>
-                    <Radio {...input} selected={selected === modelDefinitions.value} onPress={() => this.onPress(input.onChange, modelDefinitions.value, changeState)} />
+                    <Radio {...input} selected={selected === modelDefinitions.value} onPress={() => this.onPress(input.onChange, modelDefinitions.actualValue, changeState)} />
                     <Text style={{fontSize: 28, marginTop: -10, marginLeft: 30}}>{modelDefinitions.label}</Text>
                 </Left>                
             </ListItem>

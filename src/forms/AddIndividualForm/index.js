@@ -42,32 +42,38 @@ class AddIndividualForm extends Component {
         const iDobStatus1ModelDefinition = {
             label: 'Yes',
             name: 'idobstatus',
-            value: '01'
+            value: '01',
+            actualValue: '01'
         }
         const iDobStatus2ModelDefinition = {
             label: 'No',
             name: 'idobstatus',
-            value: '02'
+            value: '02',
+            actualValue: '02'
         }
         const genderMaleModelDefinition = {
             label: 'Male',
             name: 'gender',
-            value: 'M'
+            value: 'M',
+            actualValue: '01'
         }
         const genderFemaleModelDefinition = {
             label: 'Female',
             name: 'gender',
-            value: 'F'
+            value: 'F',
+            actualValue: '02'
         }
         const availability1ModelDefinition = {
             label: 'Yes',
             name: 'availability',
-            value: '01'
+            value: '03',
+            actualValue: '01',
         }
         const availability2ModelDefinition = {
             label: 'No',
             name: 'availability',
-            value: '02'
+            value: '04',
+            actualValue: '02'
         }
         return (
             <View style={{width: 625, padding: 20}}>
@@ -81,8 +87,8 @@ class AddIndividualForm extends Component {
                 <Field type="radio" name="gender" component={RadioInput} modelDefinitions={genderMaleModelDefinition} selected={this.state.selected} changeState={() => this.onPress('M')} />
                 <Field type="radio" name="gender" component={RadioInput} modelDefinitions={genderFemaleModelDefinition} selected={this.state.selected} changeState={() => this.onPress('F')} />
                 <Text style={{ fontSize: 28, marginTop: 10}}>Availability - Will you be available for next 3-4 days during the survey ?</Text>
-                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability1ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('01')} />
-                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability2ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('02')} />
+                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability1ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('03')} />
+                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability2ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('04')} />
             </View>
         );
     }

@@ -30,12 +30,14 @@ class ClusterForm extends Component {
         const preSurveyModelDefinition = {
             label: 'Pre-Survey',
             name: 'surveytype',
-            value: '01'
+            value: '01',
+            actualValue: '01'
         };
         const postSurveyModelDefinition = {
             label: 'Post-Survey',
             name: 'surveytype',
-            value: '02'
+            value: '02',
+            actualValue: '02'
         };
         return (
             <View style={{ width: 625, padding: 20 }}>

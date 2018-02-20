@@ -33,37 +33,44 @@ class HouseholdForm extends Component {
         const householdOption1ModelDefinition = {
             label: 'Complete',
             name: 'surveytype',
-            value: '01'
+            value: '01',
+            actualValue: '01',
         }
         const householdOption2ModelDefinition = {
             label: 'Complete, Information provided by neighbor',
             name: 'surveytype',
-            value: '02'
+            value: '02',
+            actualValue: '02'
         }
         const householdOption3ModelDefinition = {
             label: 'Incomplete, Locked House',
             name: 'surveytype',
-            value: '03'
+            value: '03',
+            actualValue: '03'
         }
         const householdOption4ModelDefinition = {
             label: 'Incomplete, No competent responded at home',
             name: 'surveytype',
-            value: '04'
+            value: '04',
+            actualValue: '04'
         }
         const householdOption5ModelDefinition = {
             label: 'Incomplete, Refused',
             name: 'surveytype',
-            value: '05'
+            value: '05',
+            actualValue: '05'
         }
         const householdOption6ModelDefinition = {
             label: 'Incomplete, Other',
             name: 'surveytype',
-            value: '06'
+            value: '06',
+            actualValue: '06'
         }
         const householdOption7ModelDefinition = {
             label: 'Incomplete, Extended absence (per neighbor)',
             name: 'surveytype',
-            value: '07'
+            value: '07',
+            actualValue: '07'
         }
         return (
             <View style={{width: 625, padding: 20}}>
