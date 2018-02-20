@@ -1,5 +1,5 @@
 import { NavigationActions, StackNavigator } from 'react-navigation';
-import {AppNavigator} from '../navigations/index';
+import { AppNavigator } from '../navigations/index';
 
 
 //const welcomeAction = AppNavigator.router.getActionForPathAndParams('Home');
@@ -10,6 +10,9 @@ const navReducer = (state, action) => {
     switch (action.type) {
         case 'goToHome':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Home' }), state);
+            break;
+        case 'goToCluster':
+            newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Cluster' }), state);
             break;
         case 'goToDashboard':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Dashboard' }), state);
