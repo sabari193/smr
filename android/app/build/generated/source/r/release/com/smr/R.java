@@ -1856,9 +1856,21 @@ containing a value of this type.
         public static final int abc_textfield_search_default_mtrl_alpha=0x7f020049;
         public static final int abc_textfield_search_material=0x7f02004a;
         public static final int node_modules_reactnavigation_src_views_assets_backicon=0x7f02004b;
-        public static final int notification_template_icon_bg=0x7f02004e;
+        public static final int notification_template_icon_bg=0x7f02005a;
         public static final int splash=0x7f02004c;
         public static final int src_assets_images_cluster_form_banner=0x7f02004d;
+        public static final int src_components_pocketui_images_balance=0x7f02004e;
+        public static final int src_components_pocketui_images_household=0x7f02004f;
+        public static final int src_components_pocketui_images_logo=0x7f020050;
+        public static final int src_components_pocketui_images_mastercard=0x7f020051;
+        public static final int src_components_pocketui_images_paypal=0x7f020052;
+        public static final int src_components_pocketui_images_visa=0x7f020053;
+        public static final int src_images_addhousehold=0x7f020054;
+        public static final int src_images_analytics=0x7f020055;
+        public static final int src_images_completedsurvey=0x7f020056;
+        public static final int src_images_delete=0x7f020057;
+        public static final int src_images_edithousehold=0x7f020058;
+        public static final int src_images_survey=0x7f020059;
     }
     public static final class id {
         public static final int action0=0x7f0d005b;

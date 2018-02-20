@@ -1,278 +1,402 @@
-import React, { Component } from 'react';
-import realm from '../../providers/realm';
+import React from 'react';
+import { StyleSheet, View, Text, ScrollView, Icon } from 'react-native';
 import _ from 'lodash';
 import moment from 'moment';
-import { Image, TouchableHighlight } from 'react-native';
 import {
-    Container,
-    Content,
-    Card,
-    CardItem,
-    Text,
-    Body,
-    Left,
-    Button,
-    Icon,
-    List,
-    ListItem,
-    Right,
-    View
+  colors, FormRow, List, Button, ListItem,
+  WalletHeader, RadioButton, Divider, FormInput
+} from '../../components/PocketUI/index';
+import realm from '../../providers/realm';
 
-} from 'native-base';
-import { get } from 'lodash';
-import { connect } from "react-redux";
-import HouseholdForm from "../../forms/HouseholdForm/index";
-import MIcon from '../../components/MIcon/index';
+export default class HouseHoldScreen extends React.Component {
+  constructor(props) {
+    super(props);
 
-class HouseHoldScreen extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            HouseholdID: '',
-            HouseholdStatus: '1',
-            HouseholdStatusValue: 'Complete',
-            personList: [],
-            clusterID: '',
-            villageName: '',
-            accuracy: 0,
-            latitude: 0,
-            longitude: 0
-        }
+    this.state = {
+      HouseholdStatus1: true,
+      HouseholdStatus2: false,
+      HouseholdStatus3: false,
+      HouseholdStatus4: false,
+      HouseholdStatus5: false,
+      HouseholdStatus6: false,
+      HouseholdID: '',
+      HouseholdStatus: '1',
+      HouseholdStatusValue: 'Complete',
+      personList: [],
+      clusterID: '',
+      villageName: '',
+      accuracy: 0,
+      latitude: 0,
+      longitude: 0
     }
 
-    componentWillReceiveProps(nextProps) {
-        console.log("nextProps", nextProps);
-        let householdStatus = '1';
-        if (nextProps.householdValues.values) {
-            householdStatus = nextProps.householdValues.values.householdStatus;
-        }
-        switch (householdStatus) {
-            case '1':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Complete'
-                });
-                break;
-            case '2':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Complete, Information provided by neighbor'
-                });
-                break;
-            case '3':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Incomplete, Locked House'
-                });
-                break;
-            case '4':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Incomplete, No competent responded at home'
-                });
-                break;
-            case '5':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Incomplete, Refused'
-                });
-                break;
-            case '6':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Incomplete, Other'
-                });
-                break;
-            case '7':
-                this.setState({
-                    HouseholdStatus: householdStatus,
-                    HouseholdStatusValue: 'Incomplete, Extended absence (per neighbor)'
-                });
-                break;
-            default:
-                break;
-        }
 
+  }
+  static navigationOptions = ({ navigation, navigate }) => {
+    const { params = {} } = navigation.state;
+    return {
+      headerTitleStyle: { marginLeft: 30, fontSize: 23, fontWeight: 'bold', textAlign: 'center', },
+      headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 8 },
+      headerRight: (
+        <Button
+          buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
+          fontSize={25}
+          title='Submit'
+          onPress={params.handleSave}
+        />
+      ),
+      headerLeft: (
+        <Button
+          buttonStyle={{ width: 100, height: 100, backgroundColor: '#4c9689', marginRight: 10 }}
+          fontSize={25}
+          title='Home'
+          onPress={params.goHome}
+        />
+      )
     }
-    componentWillMount() {
-        const { params = {} } = this.props.navigation.state;
-        const clusterInfo = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
-        this.props.navigation.setParams({ handleSave: this._handleSave.bind(this), goHome: this._goHome.bind(this) });
-        let HouseholdNumber = ''
-        if (!params.HouseholdID) {
-            let activehouseholdData = realm.objects('HouseholdNumber').filtered('Submitted="active" AND clusterID=$0', clusterInfo[0].clusterID);
-            if (activehouseholdData.length === 1) {
-                HouseholdNumber = activehouseholdData[0].HouseholdID;
-            }
-            else {
-                let completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
-                if (completedhouseholdData.length > 0) {
-                    let householdNo = parseInt(completedhouseholdData[completedhouseholdData.length - 1].HouseholdID) + 1
-                    HouseholdNumber = String(householdNo);
-                }
-                else {
-                    HouseholdNumber = '1';
-                }
-            }
+  };
+
+  state = {
+    selectedTab: 'HouseHold'
+  };
+
+  componentWillMount() {
+    const { params = {} } = this.props.navigation.state;
+    const clusterInfo = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
+    this.props.navigation.setParams({ handleSave: this._handleSave.bind(this), goHome: this._goHome.bind(this) });
+    let HouseholdNumber = ''
+    if (!params.HouseholdID) {
+      let activehouseholdData = realm.objects('HouseholdNumber').filtered('Submitted="active" AND clusterID=$0', clusterInfo[0].clusterID);
+      if (activehouseholdData.length === 1) {
+        HouseholdNumber = activehouseholdData[0].HouseholdID;
+      }
+      else {
+        let completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
+        if (completedhouseholdData.length > 0) {
+          let householdNo = parseInt(completedhouseholdData[completedhouseholdData.length - 1].HouseholdID) + 1
+          HouseholdNumber = String(householdNo);
         }
         else {
-            HouseholdNumber = params.HouseholdID;
+          HouseholdNumber = '1';
         }
+      }
+    }
+    else {
+      HouseholdNumber = params.HouseholdID;
+    }
+    this.setState({
+      HouseholdID: HouseholdNumber,
+      clusterID: clusterInfo[0].clusterID,
+      villageName: clusterInfo[0].villageName,
+      personList: realm.objects('Household').filtered('HouseholdID=$0 AND Submitted= "active"', HouseholdNumber)
+    });
+  }
+  componentDidMount() {
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        console.log("position.coords.accuracy", position.coords.accuracy);
         this.setState({
-            HouseholdID: HouseholdNumber,
-            clusterID: clusterInfo[0].clusterID,
-            villageName: clusterInfo[0].villageName,
-            personList: realm.objects('Household').filtered('HouseholdID=$0 AND Submitted= "active"', HouseholdNumber)
+          accuracy: position.coords.accuracy,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
         });
-    }
-    componentDidMount() {
-        const { dispatch, householdValues } = this.props;
-
-        navigator.geolocation.getCurrentPosition(
-            async (position) => {
-                console.log("position.coords.accuracy", position.coords.accuracy);
-                this.setState({
-                    accuracy: position.coords.accuracy,
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude
-                });
-            },
-            (error) => console.log('location is not available'),
-            { enableHighAccuracy: false, timeout: 30000 }
-        )
-    }
-    _goHome() {
-        const { navigate } = this.props.navigation;
-        navigate('Dashboard');
-    }
-    _handleSave() {
-        const { navigate } = this.props.navigation;
-        if (this.state.HouseholdStatus !== '1') {
-            if (this.state.HouseholdStatus !== '2') {
-                const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
-                const householdObj = {
-                    id: `${this.state.HouseholdID}${new Date().getTime()}`,
-                    householdNumberPrimary: HouseholdPrimary,
-                    HouseholdID: this.state.HouseholdID,
-                    HouseholdStatus: this.state.HouseholdStatus,
-                    Name: '',
-                    KnowDOB: false,
-                    DOB: '',
-                    AgeDays: '',
-                    Age: '',
-                    Sex: '',
-                    IsPersonAvailable: false,
-                    Submitted: 'inprogress',
-                    HouseholdStatusValue: this.state.HouseholdStatusValue,
-                    clusterID: this.state.clusterID,
-                    UpdatedTime: moment().format('MM-DD-YYYY h:mm:ss a'),
-                    latitude: this.state.latitude,
-                    longitude: this.state.longitude,
-                    accuracy: this.state.accuracy
-                }
-                realm.write(() => {
-                    realm.delete(realm.objects('Household').filtered('HouseholdID=$0', this.state.HouseholdID));
-                    realm.create('Household', householdObj);
-                    realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
-
-                });
-                navigate('Dashboard');
-            }
-            else {
-                this.savehouseholdInformation();
-            }
-        }
-        else {
-            this.savehouseholdInformation();
-        }
-    }
-
-    savehouseholdInformation() {
-        const { navigate } = this.props.navigation;
+      },
+      (error) => console.log('location is not available'),
+      { enableHighAccuracy: false, timeout: 30000 }
+    )
+  }
+  _goHome() {
+    const { navigate } = this.props.navigation;
+    navigate('Dashboard');
+  }
+  _handleSave() {
+    const { navigate } = this.props.navigation;
+    if (this.state.HouseholdStatus !== '1') {
+      if (this.state.HouseholdStatus !== '2') {
         const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
-        let idList = _.map(JSON.parse(JSON.stringify(this.state.personList)), 'id');
+        const householdObj = {
+          id: `${this.state.HouseholdID}${new Date().getTime()}`,
+          householdNumberPrimary: HouseholdPrimary,
+          HouseholdID: this.state.HouseholdID,
+          HouseholdStatus: this.state.HouseholdStatus,
+          Name: '',
+          KnowDOB: false,
+          DOB: '',
+          AgeDays: '',
+          Age: '',
+          Sex: '',
+          IsPersonAvailable: false,
+          Submitted: 'inprogress',
+          HouseholdStatusValue: this.state.HouseholdStatusValue,
+          clusterID: this.state.clusterID,
+          UpdatedTime: moment().format('MM-DD-YYYY h:mm:ss a'),
+          latitude: this.state.latitude,
+          longitude: this.state.longitude,
+          accuracy: this.state.accuracy
+        }
         realm.write(() => {
-            for (var i = 0; i < idList.length; i++) {
-                realm.create('Household', { id: idList[i], Submitted: 'inprogress' }, true);
-            }
-            const householdDetails = realm.objects('Household').filtered('Submitted="inprogress" AND HouseholdStatus!="1" AND HouseholdStatus!= "2" AND HouseholdID=$0', this.state.HouseholdID);
-            realm.delete(householdDetails);
-            realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
-        });
-        this.setState({
-            personList: []
+          realm.delete(realm.objects('Household').filtered('HouseholdID=$0', this.state.HouseholdID));
+          realm.create('Household', householdObj);
+          realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
+
         });
         navigate('Dashboard');
+      }
+      else {
+        this.savehouseholdInformation();
+      }
     }
+    else {
+      this.savehouseholdInformation();
+    }
+  }
 
-    removePerson(removePerson, index) {
-        realm.write(() => {
-            realm.delete(removePerson);
-            this.setState({
-                personList: realm.objects('Household').filtered('HouseholdID=$0 AND Submitted= "active"', this.state.HouseholdID)
-            })
-        });
-    }
+  savehouseholdInformation() {
+    const { navigate } = this.props.navigation;
+    const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
+    let idList = _.map(JSON.parse(JSON.stringify(this.state.personList)), 'id');
+    realm.write(() => {
+      for (var i = 0; i < idList.length; i++) {
+        realm.create('Household', { id: idList[i], Submitted: 'inprogress' }, true);
+      }
+      const householdDetails = realm.objects('Household').filtered('Submitted="inprogress" AND HouseholdStatus!="1" AND HouseholdStatus!= "2" AND HouseholdID=$0', this.state.HouseholdID);
+      realm.delete(householdDetails);
+      realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
+    });
+    this.setState({
+      personList: []
+    });
+    navigate('Dashboard');
+  }
 
-    render() {
-        const { dispatch, householdValues } = this.props;
-        const { navigate } = this.props.navigation;
-        return (
-            <Container style={{ backgroundColor: '#e9e9e9' }}>
-                <Content style={{ padding: 20 }}>
-                    <Card style={{ flex: 0 }}>
-                        <CardItem>
-                            <Left>
-                                <MIcon family='FontAwesome' name='address-card' style={{ fontSize: 100, color: '#4c9689' }} />
-                                <Body>
-                                    <Text style={{ fontSize: 32 }}>Add Household</Text>
-                                    <Text note>Please enter your household information.</Text>
-                                </Body>
-                            </Left>
-                        </CardItem>
-                        <CardItem>
-                            <Body>
-                                <HouseholdForm />
-                            </Body>
-                        </CardItem>
-                        {(this.state.HouseholdStatus == '1' || this.state.HouseholdStatus == '2') &&
-                            <CardItem style={{ backgroundColor: '#4c9689' }}>
-                                <Body>
-                                    <Button full transparent onPress={() => { navigate('AddIndividual', { HouseholdID: this.state.HouseholdID, HouseholdStatus: this.state.HouseholdStatus, HouseholdStatusValue: this.state.HouseholdStatusValue, clusterID: this.state.clusterID, villageName: this.state.villageName })/* dispatch({ type: 'goToAddIndividual' }) */ }}>
-                                        <Text style={{ fontSize: 20, color: '#fff' }}>Add Individual</Text>
-                                    </Button>
-                                </Body>
-                            </CardItem>
-                        }
-                    </Card>
-                    {(this.state.HouseholdStatus == '1' || this.state.HouseholdStatus == '2') && this.state.personList.map(function (person, index) {
-                        return <List avatar style={{ backgroundColor: '#fff' }} key={index}>
-                            <ListItem>
-                                <Left style={{ width: 100 }}>
-                                    <View style={{ width: 75, height: 75, justifyContent: 'center', alignItems: 'center', borderRadius: 50, backgroundColor: '#4c9689' }}>
-                                        <MIcon family='FontAwesome' name={person.Sex == 'M' ? 'male' : 'female'} style={{ fontSize: 30, color: '#fff' }} />
-                                    </View>
-                                </Left>
-                                <Body style={{ marginLeft: -355 }}>
-                                    <Text style={{ fontSize: 28 }}>{person.Name}</Text>
-                                    <Text note style={{ fontSize: 20 }}>{`${person.KnowDOB ? `DOB  : ` : `Age : `} ${person.KnowDOB ? person.DOB : person.Age}`}</Text>
-                                </Body>
-                                <TouchableHighlight onPress={() => this.removePerson(person, index)}>
-                                    <Right>
-                                        <MIcon style={{ fontSize: 50, color: '#4c9689' }} family='FontAwesome' name="trash" />
-                                    </Right>
-                                </TouchableHighlight>
-                            </ListItem>
-                        </List>
-                    }, this)}
-                </Content>
-            </Container>
-        )
-    }
+  removePerson(removePerson, index) {
+    realm.write(() => {
+      realm.delete(removePerson);
+      this.setState({
+        personList: realm.objects('Household').filtered('HouseholdID=$0 AND Submitted= "active"', this.state.HouseholdID)
+      })
+    });
+  }
+
+  render() {
+    const { navigate } = this.props.navigation;
+    return (
+      <View style={styles.container}>
+        <ScrollView style={{ backgroundColor: 'white' }}>
+          <Text style={styles.headingLetterMain}>Household Information</Text>
+          <Text style={styles.headingLetter}>{`Cluster ID : ${this.state.clusterID} / Village Name : ${this.state.villageName}  `}</Text>
+          <View style={{ flex: 2, flexDirection: 'row', alignSelf: 'flex-end' }}>
+            <Text style={styles.headingLetter1}>{`Household Number`}</Text>
+            <FormInput
+              inputStyle={{ width: 50 }}
+              maxLength={3}
+              placeholder='HouseHold Number'
+              value={this.state.HouseholdID}
+              onChangeText={(HouseholdID) => this.setState({ HouseholdID: HouseholdID })}
+              keyboardType='numeric' />
+          </View>
+          <Text style={styles.headingLetter1}>Household Status</Text>
+          <RadioButton
+            title='Complete'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus1: !this.state.HouseholdStatus1,
+              HouseholdStatus2: false,
+              HouseholdStatus3: false,
+              HouseholdStatus4: false,
+              HouseholdStatus5: false,
+              HouseholdStatus6: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '1',
+              HouseholdStatusValue: 'Complete'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus1}
+          />
+          <RadioButton
+            title='Complete, Information provided by neighbor'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus2: !this.state.HouseholdStatus2,
+              HouseholdStatus1: false,
+              HouseholdStatus3: false,
+              HouseholdStatus4: false,
+              HouseholdStatus5: false,
+              HouseholdStatus6: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '2',
+              HouseholdStatusValue: 'Complete, Information provided by neighbor'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus2}
+          />
+          <RadioButton
+            title='Incomplete, Locked House'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus3: !this.state.HouseholdStatus3,
+              HouseholdStatus2: false,
+              HouseholdStatus1: false,
+              HouseholdStatus4: false,
+              HouseholdStatus5: false,
+              HouseholdStatus6: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '3',
+              HouseholdStatusValue: 'Incomplete, Locked House'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus3}
+          />
+          <RadioButton
+            title='Incomplete, No competent responded at home'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus4: !this.state.HouseholdStatus4,
+              HouseholdStatus2: false,
+              HouseholdStatus3: false,
+              HouseholdStatus1: false,
+              HouseholdStatus5: false,
+              HouseholdStatus6: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '4',
+              HouseholdStatusValue: 'Incomplete, No competent responded at home'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus4}
+          />
+          <RadioButton
+            title='Incomplete, Refused'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus5: !this.state.HouseholdStatus5,
+              HouseholdStatus2: false,
+              HouseholdStatus3: false,
+              HouseholdStatus4: false,
+              HouseholdStatus1: false,
+              HouseholdStatus6: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '5',
+              HouseholdStatusValue: 'Incomplete, Refused'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus5}
+          />
+          <RadioButton
+            title='Incomplete, Other'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus6: !this.state.HouseholdStatus6,
+              HouseholdStatus2: false,
+              HouseholdStatus3: false,
+              HouseholdStatus4: false,
+              HouseholdStatus5: false,
+              HouseholdStatus1: false,
+              HouseholdStatus7: false,
+              HouseholdStatus: '6',
+              HouseholdStatusValue: 'Incomplete, Other'
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus6}
+          />
+          <RadioButton
+            title='Incomplete, Extended absence (per neighbor)'
+            textStyle={{ color: '#4B5461', opacity: 0.8, fontSize: 20 }}
+            checkedIcon='dot-circle-o'
+            uncheckedIcon='circle-o'
+            onPress={() => this.setState({
+              HouseholdStatus7: !this.state.HouseholdStatus7,
+              HouseholdStatus1: false,
+              HouseholdStatus2: false,
+              HouseholdStatus3: false,
+              HouseholdStatus4: false,
+              HouseholdStatus5: false,
+              HouseholdStatus6: false,
+              HouseholdStatus: '7',
+              HouseholdStatusValue: 'Incomplete, Extended absence (per neighbor)'
+
+            })}
+            size={17}
+            containerStyle={{ backgroundColor: 'transparent', borderColor: 'transparent' }}
+            checked={this.state.HouseholdStatus7}
+          />
+          {(this.state.HouseholdStatus1 || this.state.HouseholdStatus2) &&
+            <Button
+              buttonStyle={{ marginTop: 40, marginBottom: 15, backgroundColor: '#4c9689' }}
+              title='Add Individual'
+              onPress={() =>
+                navigate('AddIndividual', { HouseholdID: this.state.HouseholdID, HouseholdStatus: this.state.HouseholdStatus, HouseholdStatusValue: this.state.HouseholdStatusValue, clusterID: this.state.clusterID, villageName: this.state.villageName })
+              }
+            />
+          }
+          <Divider />
+          {(this.state.HouseholdStatus1 || this.state.HouseholdStatus2) && this.state.personList.map(function (person, index) {
+            return <WalletHeader
+              key={index}
+              headingIcon={person.Sex}
+              heading={`Name : ${person.Name}`}
+              heading1={`${person.KnowDOB ? `DOB  : ` : `Age : `} ${person.KnowDOB ? person.DOB : person.Age}`}
+              rightIcon='trash'
+              rightIconClick={() => this.removePerson(person, index)}
+            />;
+          }, this)}
+        </ScrollView>
+      </View >
+    );
+  }
 }
 
-const mapStateToProps = state => ({
-    householdValues: state.form.householdform
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.white,
+    flex: 1,
+    padding: 0,
+  },
+  list: {
+    marginTop: 15,
+  },
+  headingLetter: {
+    color: '#3E4A59',
+    fontWeight: '800',
+    fontSize: 23,
+    marginLeft: 15,
+    marginTop: 10,
+    marginBottom: 15,
+    flex: 1,
+    textAlign: 'center'
+  },
+  headingLetter1: {
+    color: '#3E4A59',
+    fontWeight: '700',
+    fontSize: 20,
+    marginLeft: 15,
+    marginTop: 10
+  },
+  headingLetterMain: {
+    color: '#3E4A59',
+    fontWeight: '800',
+    fontSize: 30,
+    marginLeft: 15,
+    marginTop: 10,
+    marginBottom: 30,
+    flex: 1,
+    textAlign: 'center'
+  }
 });
-
-export default connect(mapStateToProps)(HouseHoldScreen);

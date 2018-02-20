@@ -95,5 +95,6 @@ class HouseholdForm extends Component {
 
 
 export default reduxForm({
-    form: 'householdform'
+    form: 'householdform',
+    enableReinitialize: true
 })(HouseholdForm);
