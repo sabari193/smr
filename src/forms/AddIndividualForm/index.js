@@ -17,14 +17,37 @@ class AddIndividualForm extends Component {
     constructor(props){
         super(props);
         this.state = {
-            selected: ''
+            selected: '',
+            dobStatus:'',
+            Sex:'',
+            availability:''
+
+
         }
     }
 
-    onPress(selected){
-        this.setState({
-            selected
-        })
+    onPress(key,value){
+        console.log(key,value)
+        switch (key) {
+            case 'dobStatus':
+            this.setState({
+                dobStatus:value
+             })
+            break;
+            case 'Sex':
+            this.setState({
+                Sex:value
+             })
+            break;
+            case 'availability':
+            this.setState({
+                availability:value
+             })
+            break;
+            default:
+                break;
+        }
+        
     }
 
     render(){
@@ -41,54 +64,54 @@ class AddIndividualForm extends Component {
         }
         const iDobStatus1ModelDefinition = {
             label: 'Yes',
-            name: 'idobstatus',
+            name: 'dobStatus',
             value: '01',
-            actualValue: '01'
+            actualValue: true
         }
         const iDobStatus2ModelDefinition = {
             label: 'No',
-            name: 'idobstatus',
+            name: 'dobStatus',
             value: '02',
-            actualValue: '02'
+            actualValue: false
         }
         const genderMaleModelDefinition = {
             label: 'Male',
-            name: 'gender',
+            name: 'Sex',
             value: 'M',
-            actualValue: '01'
+            actualValue: 'M'
         }
         const genderFemaleModelDefinition = {
             label: 'Female',
-            name: 'gender',
+            name: 'Sex',
             value: 'F',
-            actualValue: '02'
+            actualValue: 'F'
         }
         const availability1ModelDefinition = {
             label: 'Yes',
             name: 'availability',
             value: '03',
-            actualValue: '01',
+            actualValue: true,
         }
         const availability2ModelDefinition = {
             label: 'No',
             name: 'availability',
             value: '04',
-            actualValue: '02'
+            actualValue: false
         }
         return (
             <View style={{width: 625, padding: 20}}>
-                <Field name="iName" component={InputField} modelDefinitions={indNameModelDefinition} />
+                <Field name="name" component={InputField} modelDefinitions={indNameModelDefinition} />
                 <Text style={{ fontSize: 28, marginTop: 10}}>Do you know DOB ?</Text>
-                <Field type="radio" name="idobstatus" component={RadioInput} modelDefinitions={iDobStatus1ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('01')} />
-                <Field type="radio" name="idobstatus" component={RadioInput} modelDefinitions={iDobStatus2ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('02')} />
-                <Field name="iDOB" component={InputField} modelDefinitions={indDOBModelDefinition} />
-                <Field name="iCompletedAge" component={InputField} modelDefinitions={indCompletedAgeModelDefinition} />
+                <Field type="radio" name="dobStatus" component={RadioInput} modelDefinitions={iDobStatus1ModelDefinition} selected={this.state.dobStatus} changeState={() => this.onPress('dobStatus','01')} />
+                <Field type="radio" name="dobStatus" component={RadioInput} modelDefinitions={iDobStatus2ModelDefinition} selected={this.state.dobStatus} changeState={() => this.onPress('dobStatus','02')} />
+                <Field name="dob" component={InputField} modelDefinitions={indDOBModelDefinition} />
+                <Field name="age" component={InputField} modelDefinitions={indCompletedAgeModelDefinition} />
                 <Text style={{ fontSize: 28, marginTop: 10}}>Gender</Text>
-                <Field type="radio" name="gender" component={RadioInput} modelDefinitions={genderMaleModelDefinition} selected={this.state.selected} changeState={() => this.onPress('M')} />
-                <Field type="radio" name="gender" component={RadioInput} modelDefinitions={genderFemaleModelDefinition} selected={this.state.selected} changeState={() => this.onPress('F')} />
+                <Field type="radio" name="Sex" component={RadioInput} modelDefinitions={genderMaleModelDefinition} selected={this.state.Sex} changeState={() => this.onPress('Sex','M')} />
+                <Field type="radio" name="Sex" component={RadioInput} modelDefinitions={genderFemaleModelDefinition} selected={this.state.Sex} changeState={() => this.onPress('Sex','F')} />
                 <Text style={{ fontSize: 28, marginTop: 10}}>Availability - Will you be available for next 3-4 days during the survey ?</Text>
-                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability1ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('03')} />
-                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability2ModelDefinition} selected={this.state.selected} changeState={() => this.onPress('04')} />
+                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability1ModelDefinition} selected={this.state.availability} changeState={() => this.onPress('availability','03')} />
+                <Field type="radio" name="availability" component={RadioInput} modelDefinitions={availability2ModelDefinition} selected={this.state.availability} changeState={() => this.onPress('availability','04')} />
             </View>
         );
     }
