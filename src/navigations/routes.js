@@ -36,8 +36,7 @@ const Routes = {
         navigationOptions: {
             title: 'Add Household',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
-            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
-            headerLeft: null
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' }
         }
     },
     AddIndividual: {
@@ -45,8 +44,7 @@ const Routes = {
         navigationOptions: {
             title: 'Add Household Individual',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
-            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' },
-            headerLeft: null
+            headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' }
         }
     },
     ViewCluster: {
