@@ -60,6 +60,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         ];
 
         this.state = {
+            surveyType: '',
             w2name: '',
             w3dob: '',
             w3adayunknown: '01',
@@ -108,6 +109,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
     }
     componentWillMount() {
         this.props.navigation.setParams({ handleSubmit: this.onPress.bind(this), goHome: this._goHome.bind(this) });
+        const surveyType = realm.objects('Cluster').filtered('status = "active"')[0].surveyType;
+        this.setState({ surveyType: surveyType});
     }
 
     onChange(value) {
@@ -118,12 +121,12 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         const { params } = this.props.navigation.state;
         const { navigate } = this.props.navigation;
         if (this.isFormValid()) {
-            this.setState({
+            /* this.setState({
                 h1hhid: params.HouseholdID,
                 h4avisit1: moment().format('MM-DD-YYY h:mm:ss a'),
                 h27latitude: '2.2',
                 h28longitude: '3.3'
-            });
+            }); */
             const surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
             realm.write(() => {
                 realm.create('SurveyInformation', { surveyID: surveyID, surveyData: JSON.stringify(this.state), status: 'inprogress' }, true);
@@ -218,6 +221,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 value={this.state.w6children}
                                 onChangeText={(name) => this.setState({ w6children: name })} />
                         </View>
+                        { this.state.surveyType === '02' &&
+                        <View>
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>Were you living in this household when the MR campaign was occuring?</Text>
                             <RadioForm
@@ -231,7 +236,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 initial={0}
                                 onPress={(value) => { this.setState({ w7livehhcampaign: value }); console.log(this.state) }}
                             />
-                        </View>
+                        </View>                        
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>Did you receive a MR dose during the recent vaccination campaign?</Text>
                             <RadioForm
@@ -246,6 +251,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 onPress={(value) => { this.setState({ w8mrcampaigndose: value }); console.log(this.state) }}
                             />
                         </View>
+                        </View>
+                        }
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
                             <RadioForm
