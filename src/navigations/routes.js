@@ -12,7 +12,7 @@ import ViewSurveyDetails from '../containers/ViewSurveyDetails/index';
 import HouseholdSurvey from "../containers/HouseholdSurvey/index";
 import CompletedSurveyDetails from "../containers/CompletedSurveyDetails/index";
 import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index";
-import ChildCampaignSurvey from "../containers/ChildCampaignSurvey/index"; 
+import ChildCampaignSurvey from "../containers/ChildCampaignSurvey/index";
 
 const Routes = {
     Home: {
@@ -62,10 +62,7 @@ const Routes = {
         screen: RandomListScreen
     },
     ViewSurveyDetails: {
-        screen: ViewSurveyDetails,
-        navigationOptions: {
-            title: 'Survey Details'
-        }
+        screen: ViewSurveyDetails
     },
     HouseholdForm: {
         screen: HouseholdSurvey,
@@ -80,16 +77,10 @@ const Routes = {
         }
     },
     WomenCampaignSurvey: {
-        screen: WomenCampaignSurvey,
-        navigationOptions: {
-            title: 'Women Campaign Survey'
-        }
+        screen: WomenCampaignSurvey
     },
     ChildCampaignSurvey: {
-        screen: ChildCampaignSurvey,
-        navigationOptions: {
-            title: 'Child Campaign Survey'
-        }
+        screen: ChildCampaignSurvey
     },
     /*
     WomenCampaignSurvey: {

@@ -12,7 +12,6 @@ export default class WomenCampaignSurvey extends ValidationComponent {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
-            title: 'Women Survey',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
             headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
             headerRight: (
@@ -224,7 +223,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 h27latitude: '2.2',
                 h28longitude: '3.3'
             });
-            const surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 &&  && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
+            const surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
             realm.write(() => {
                 realm.create('SurveyInformation', { surveyID: surveyID, surveyData: JSON.stringify(this.state), status: 'inprogress' }, true);
                 navigate('RandomListScreen');

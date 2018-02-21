@@ -57,7 +57,6 @@ export default class ViewClusterScreen extends React.Component {
         });
         this.props.navigation.setParams({ handleSubmit: this.handleSubmit.bind(this), goHome: this._goHome.bind(this) });
         let obj = JSON.parse(JSON.stringify(realm.objects('Household').filtered('Submitted="inprogress"')));
-        console.log('obj', obj);
         let result = _.chain(obj).groupBy("HouseholdID").map((group, HouseholdID) => ({ // map the groups to new objects
             HouseholdID,
             HouseholdPrimary: group[0].HouseholdPrimary,
