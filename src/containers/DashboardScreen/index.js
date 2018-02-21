@@ -49,14 +49,14 @@ export default class DashboardScreen extends React.Component {
               let householdNumberDetails = JSON.parse(JSON.stringify(realm.objects('HouseholdNumber')));
               _.forEach(householdNumberDetails, (household) => {
                 realm.create('HouseholdNumber', { HouseholdPrimary: household.HouseholdPrimary, Submitted: 'deleted' }, true);
-
-                realm.create('Cluster', {
-                  clusterPrimaryID: this.state.clusterPrimaryID,
-                  status: 'deleted'
-                }, true);
               });
+              realm.create('Cluster', {
+                clusterPrimaryID: this.state.clusterPrimaryID,
+                status: 'deleted'
+              }, true);
               realm.delete(realm.objects('RandomSurvey'));
               realm.delete(realm.objects('SurveyDetails'));
+              realm.delete(realm.objects('SurveyInformation'));
               this.navigateToSignIn();
             });
           }
@@ -67,7 +67,7 @@ export default class DashboardScreen extends React.Component {
   }
   navigateToSignIn() {
     var { dispatch } = this.props.navigation;
-    dispatch({ type: 'goToCluster' });
+    dispatch({ type: 'goToHome' });
   }
   showClusterHisttory() {
     var { dispatch } = this.props.navigation;

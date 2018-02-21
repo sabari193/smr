@@ -9,8 +9,9 @@ import ViewHouseholdDetails from '../containers/ViewHouseholdDetails/index';
 import EditIndividual from '../containers/EditIndividual/index';
 import RandomListScreen from '../containers/RandomListScreen/index';
 import ViewSurveyDetails from '../containers/ViewSurveyDetails/index';
-/* import HouseholdSurvey from "../containers/HouseholdSurvey/index";
-import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index"; */
+import HouseholdSurvey from "../containers/HouseholdSurvey/index";
+import CompletedSurveyDetails from "../containers/CompletedSurveyDetails/index";
+/*import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index"; */
 
 const Routes = {
     Home: {
@@ -64,25 +65,20 @@ const Routes = {
         navigationOptions: {
             title: 'Survey Details'
         }
-    }/* ,
+    },
     HouseholdForm: {
         screen: HouseholdSurvey,
-        navigationOptions: ({ navigation }) => {
-            const { params = {} } = navigation.state;
-            return {
-                title: 'Househould Survey',
-                headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
-                headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
-                headerRight: (
-                    <Button
-                        buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
-                        title='Save'
-                        onPress={params.handleSubmit}
-                    />
-                )
-            }
+        navigationOptions: {
+            title: 'Household Survey'
         }
     },
+    CompletedSurveyDetails: {
+        screen: CompletedSurveyDetails,
+        navigationOptions: {
+            title: 'Completed Survey'
+        }
+    }
+    /*
     WomenCampaignSurvey: {
         screen: WomenCampaignSurvey,
         navigationOptions: ({ navigation }) => {

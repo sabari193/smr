@@ -1,13 +1,15 @@
 import React from 'react';
 import { StyleSheet, View, ScrollView, DatePickerAndroid, Switch } from 'react-native';
 import { Card, colors, WalletHeader, MenuHeader, Button, Text } from '../../components/PocketUI/index';
+import realm from '../../providers/realm';
 
 export default class ViewSurveyDetails extends React.Component {
     constructor(props) {
         super(props);
         const { params } = this.props.navigation.state;
         this.state = {
-            personList: params.individualInfo
+            personList: params.individualInfo,
+            householdSurveyStatus: false
         }
         console.log('params', params)
 
@@ -22,27 +24,49 @@ export default class ViewSurveyDetails extends React.Component {
     state = {
         selectedTab: 'ViewSurveyDetails'
     }
+    componentWillMount() {
+        const { params } = this.props.navigation.state;
+        realm.write(() => {
+            this.setState({
+                householdSurveyStatus: realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID).length > 0 ? false : true
+            });
+        });
+
+    }
     render() {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
         return (
             <View style={styles.container}>
                 <ScrollView style={{ backgroundColor: 'white' }}>
-                    <Button
-                        buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                        title={`Household survey for ${params.HouseholdID}`}
-                        onPress={() =>
-                            navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
-                        }
-                    />
+                    {(!this.state.householdSurveyStatus) &&
+                        <Button
+                            buttonStyle={{ marginTop: 75, marginBottom: 30 }}
+                            title={`Household survey for ${params.HouseholdID}`}
+                            onPress={() =>
+                                navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
+                            }
+                        />
+                    }
+                    {(this.state.householdSurveyStatus) &&
+                        <Button
+                            disabled={true}
+                            buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
+                            title={`Household survey for ${params.HouseholdID} completed`}
+                            onPress={() =>
+                                navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
+                            }
+                        />
+                    }
                     {this.state.personList.map(function (person, index) {
-                        return <WalletHeader
-                            key={index}
-                            headingIcon={person.Sex}
-                            heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                            rightIcon='pencil-square'
-                            rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID })}
-                        />;
+                        return <View key={index}>
+                            <WalletHeader
+                                headingIcon={person.Sex}
+                                heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                rightIcon='pencil-square'
+                                rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID })}
+                            />
+                        </View>;
                     }, this)}
                 </ScrollView>
             </View>

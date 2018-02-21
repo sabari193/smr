@@ -95,7 +95,22 @@ SurveyDetailsSchema.schema = {
     }
 };
 
+class SurveyInformation extends Realm.Object { }
+SurveyInformation.schema = {
+    name: 'SurveyInformation',
+    primaryKey: 'surveyID',
+    properties: {
+        surveyID: { type: 'int' },
+        HouseholdID: { type: 'string' },
+        AgeGroup: { type: 'string' },
+        status: 'string',
+        Name: 'string',
+        Sex: 'string',
+        surveyData: { type: 'string' }
+    }
+}
+
 export default new Realm({
     schema: [Cluster, HouseholdSchema, HouseholdNumberSchema,
-        RandomSurveySchema, SurveyDetailsSchema]
+        RandomSurveySchema, SurveyDetailsSchema, SurveyInformation]
 });

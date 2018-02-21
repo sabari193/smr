@@ -37,6 +37,25 @@ export default class RandomListScreen extends React.Component {
                                     if (!response.data.Message) {
                                         realm.write(() => {
                                             realm.create('RandomSurvey', { clusterID: ClusterId, surveyDetails: JSON.stringify(response.data.SurveyDetails), status: 'saved' });
+
+                                            _.forEach(response.data.SurveyDetails, function (value) {
+                                                _.forEach(value.IndividualInfo, function (individual) {
+                                                    individual.surveyID = Math.floor(new Date().getTime() * Math.random());
+                                                    individual.HouseholdID = value.HouseholdID;
+                                                    individual.status = 'open';
+                                                    individual.surveyData = '';
+                                                    realm.create('SurveyInformation', individual);
+                                                });
+                                                let householdEntry = {}
+                                                householdEntry.AgeGroup = 'H';
+                                                householdEntry.Name = '';
+                                                householdEntry.Sex = '';
+                                                householdEntry.HouseholdID = value.HouseholdID;
+                                                householdEntry.status = 'open';
+                                                householdEntry.surveyData = '';
+                                                householdEntry.surveyID = Math.floor(new Date().getTime() * Math.random());
+                                                realm.create('SurveyInformation', householdEntry);
+                                            });
                                         });
                                         this.setState({ surveyDetails: response.data.SurveyDetails, loading: false });
                                     }

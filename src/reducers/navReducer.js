@@ -41,6 +41,10 @@ const navReducer = (state, action) => {
         case 'goToHouseholdForm':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'HouseholdForm' }), state);
             break;
+        case 'CompletedSurveyDetails':
+            newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'CompletedSurveyDetails' }), state);
+            break;
+
         default:
             newState = AppNavigator.router.getStateForAction(action, state);
             break;
