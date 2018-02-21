@@ -47,6 +47,7 @@ export default class RandomListScreen extends React.Component {
                                                     realm.create('SurveyInformation', individual);
                                                 });
                                                 let householdEntry = {}
+                                                householdEntry.Sno = '';
                                                 householdEntry.AgeGroup = 'H';
                                                 householdEntry.Name = '';
                                                 householdEntry.Sex = '';

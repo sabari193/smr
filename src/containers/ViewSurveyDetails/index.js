@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ScrollView, DatePickerAndroid, Switch } from 'react-native';
 import { Card, colors, WalletHeader, MenuHeader, Button, Text } from '../../components/PocketUI/index';
 import realm from '../../providers/realm';
+import _ from 'lodash';
 
 export default class ViewSurveyDetails extends React.Component {
     constructor(props) {
@@ -15,11 +16,22 @@ export default class ViewSurveyDetails extends React.Component {
 
     }
 
-    static navigationOptions = {
-        title: 'Survey Details view',
-        headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
-        headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
-    };
+    static navigationOptions = ({ navigation }) => {
+        const { params = {} } = navigation.state;
+        return {
+            title: 'Survey Details Survey',
+            headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
+            headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
+            headerLeft: null,
+            headerRight: (
+                <Button
+                    buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
+                    title='Save'
+                    onPress={params.handleSubmit}
+                />
+            )
+        }
+    }
 
     state = {
         selectedTab: 'ViewSurveyDetails'
@@ -32,6 +44,25 @@ export default class ViewSurveyDetails extends React.Component {
             });
         });
 
+    }
+
+    componentDidMount() {
+        this.props.navigation.setParams({ handleSubmit: this.handleSubmit.bind(this) });
+    }
+    handleSubmit() {
+        const { params } = this.props.navigation.state;
+        const openSurveyCount = realm.objects('SurveyInformation').filtered('status = "open" && HouseholdID=$0', params.HouseholdID).length
+        if (openSurveyCount > 0) {
+            alert('Please save all forms for this household before submitting')
+        }
+        else {
+            const surveyList = realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID)
+            realm.write(() => {
+                _.forEach(surveyList, (survey) => {
+                    realm.create('SurveyInformation', { surveyID: survey.surveyID, status: 'saved' }, true);
+                });
+            });
+        }
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -64,7 +95,7 @@ export default class ViewSurveyDetails extends React.Component {
                                 headingIcon={person.Sex}
                                 heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
                                 rightIcon='pencil-square'
-                                rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID })}
+                                rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID,Sno:person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID,Sno:person.Sno })}
                             />
                         </View>;
                     }, this)}

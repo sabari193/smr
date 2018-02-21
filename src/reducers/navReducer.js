@@ -44,6 +44,12 @@ const navReducer = (state, action) => {
         case 'CompletedSurveyDetails':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'CompletedSurveyDetails' }), state);
             break;
+        case 'WomenCampaignSurvey':
+            newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'WomenCampaignSurvey' }), state);
+            break;
+        case 'ChildCampaignSurvey':
+            newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'ChildCampaignSurvey' }), state);
+            break;
 
         default:
             newState = AppNavigator.router.getStateForAction(action, state);

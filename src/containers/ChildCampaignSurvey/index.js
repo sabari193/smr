@@ -8,7 +8,7 @@ import realm from '../../providers/realm';
 import { Button, FormInput, Text } from '../../components/PocketUI';
 
 
-export default class HouseHoldSurvey extends ValidationComponent {
+export default class ChildCampaignSurvey extends ValidationComponent {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
@@ -33,7 +33,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
         }
     }
     state = {
-        selectedTab: 'HouseHoldSurvey'
+        selectedTab: 'ChildCampaignSurvey'
     };
     constructor(props) {
         super(props);
@@ -203,13 +203,15 @@ export default class HouseHoldSurvey extends ValidationComponent {
         });
     }
 
-    componentWillMount() {
-        this.props.navigation.setParams({ handleSubmit: this.onPress.bind(this), goHome: this._goHome.bind(this) });
-    }
     _goHome() {
         const { dispatch } = this.props.navigation;
         dispatch({ type: 'goToDashboard' });
     }
+
+    componentWillMount() {
+        this.props.navigation.setParams({ handleSubmit: this.onPress.bind(this), goHome: this._goHome.bind(this) });
+    }
+
     onChange(value) {
         this.setState({ formValue: value });
     }
@@ -224,8 +226,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                 h27latitude: '2.2',
                 h28longitude: '3.3'
             });
-            console.log(this.state)
-            const surveyID = realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID)[0].surveyID;
+            const surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 &&  && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
             realm.write(() => {
                 realm.create('SurveyInformation', { surveyID: surveyID, surveyData: JSON.stringify(this.state), status: 'inprogress' }, true);
                 navigate('RandomListScreen');

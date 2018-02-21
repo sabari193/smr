@@ -11,7 +11,8 @@ import RandomListScreen from '../containers/RandomListScreen/index';
 import ViewSurveyDetails from '../containers/ViewSurveyDetails/index';
 import HouseholdSurvey from "../containers/HouseholdSurvey/index";
 import CompletedSurveyDetails from "../containers/CompletedSurveyDetails/index";
-/*import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index"; */
+import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index";
+import ChildCampaignSurvey from "../containers/ChildCampaignSurvey/index"; 
 
 const Routes = {
     Home: {
@@ -77,7 +78,19 @@ const Routes = {
         navigationOptions: {
             title: 'Completed Survey'
         }
-    }
+    },
+    WomenCampaignSurvey: {
+        screen: WomenCampaignSurvey,
+        navigationOptions: {
+            title: 'Women Campaign Survey'
+        }
+    },
+    ChildCampaignSurvey: {
+        screen: ChildCampaignSurvey,
+        navigationOptions: {
+            title: 'Child Campaign Survey'
+        }
+    },
     /*
     WomenCampaignSurvey: {
         screen: WomenCampaignSurvey,

@@ -28,6 +28,7 @@ Cluster.schema = {
         clusterPrimaryID: 'string',
         clusterID: 'string',
         villageName: 'string',
+        surveyType: 'string',
         status: { type: 'string', default: 'active' }
     }
 };
@@ -106,7 +107,8 @@ SurveyInformation.schema = {
         status: 'string',
         Name: 'string',
         Sex: 'string',
-        surveyData: { type: 'string' }
+        surveyData: { type: 'string' },
+        Sno: 'string'
     }
 }
 
