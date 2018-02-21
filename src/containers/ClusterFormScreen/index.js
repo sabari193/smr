@@ -13,9 +13,10 @@ export default class ClusterFormScreen extends React.Component {
       clusterID: '',
       villageName: '',
       status: 'active',
-      clusterPrimaryID: String(new Date().getTime())
+      clusterPrimaryID: String(new Date().getTime()),
+      surveyType: '01'
     }
-    this.gender_option = [
+    this.survey_option = [
       { label: 'Pre-Campaign', value: '01' },
       { label: 'Post-Campaign', value: '02' }
     ]
@@ -63,9 +64,9 @@ export default class ClusterFormScreen extends React.Component {
             buttonColor={'#4B5461'}
             formHorizontal={true}
             labelHorizontal={true}
-            radio_props={this.gender_option}
+            radio_props={this.survey_option}
             initial={0}
-            //onPress={(value) => { this.setState({ dobStatus: value, dob: '', age: '' }); console.log(this.state) }}
+            onPress={(value) => { this.setState({ surveyType: value }); }}
           />
         </View>
 
@@ -85,10 +86,10 @@ export default class ClusterFormScreen extends React.Component {
 
 const styles = StyleSheet.create({
   headingLetter: {
-      color: '#3E4A59',
-      fontWeight: '700',
-      fontSize: 22,
-      marginLeft: 20,
-      marginTop: 10,
+    color: '#3E4A59',
+    fontWeight: '700',
+    fontSize: 22,
+    marginLeft: 20,
+    marginTop: 10,
   }
 });

@@ -12,7 +12,6 @@ export default class HouseHoldSurvey extends ValidationComponent {
     static navigationOptions = ({ navigation }) => {
         const { params = {} } = navigation.state;
         return {
-            title: 'Household Survey',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
             headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
             headerRight: (
