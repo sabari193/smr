@@ -108,9 +108,11 @@ SurveyInformation.schema = {
         Name: 'string',
         Sex: 'string',
         surveyData: { type: 'string' },
-        Sno: 'string'
+        Sno: 'string',
+        HoueholdHead: 'string',
+        selectedIndividualCount: 'string'
     }
-}
+};
 
 export default new Realm({
     schema: [Cluster, HouseholdSchema, HouseholdNumberSchema,

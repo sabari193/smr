@@ -9,10 +9,11 @@ import ViewHouseholdDetails from '../containers/ViewHouseholdDetails/index';
 import EditIndividual from '../containers/EditIndividual/index';
 import RandomListScreen from '../containers/RandomListScreen/index';
 import ViewSurveyDetails from '../containers/ViewSurveyDetails/index';
-import HouseholdSurvey from "../containers/HouseholdSurvey/index";
-import CompletedSurveyDetails from "../containers/CompletedSurveyDetails/index";
-import WomenCampaignSurvey from "../containers/WomenCampaignSurvey/index";
-import ChildCampaignSurvey from "../containers/ChildCampaignSurvey/index";
+import HouseholdSurvey from '../containers/HouseholdSurvey/index';
+import CompletedSurveyDetails from '../containers/CompletedSurveyDetails/index';
+import WomenCampaignSurvey from '../containers/WomenCampaignSurvey/index';
+import ChildCampaignSurvey from '../containers/ChildCampaignSurvey/index';
+import ClusterHistoryScreen from '../containers/ShowClusterHistory/index';
 
 const Routes = {
     Home: {
@@ -65,22 +66,19 @@ const Routes = {
         screen: ViewSurveyDetails
     },
     HouseholdForm: {
-        screen: HouseholdSurvey,
-        navigationOptions: {
-            title: 'Household Survey'
-        }
+        screen: HouseholdSurvey
     },
     CompletedSurveyDetails: {
-        screen: CompletedSurveyDetails,
-        navigationOptions: {
-            title: 'Completed Survey'
-        }
+        screen: CompletedSurveyDetails
     },
     WomenCampaignSurvey: {
         screen: WomenCampaignSurvey
     },
     ChildCampaignSurvey: {
         screen: ChildCampaignSurvey
+    },
+    ClusterHistoryScreen: {
+        screen: ClusterHistoryScreen
     },
     /*
     WomenCampaignSurvey: {

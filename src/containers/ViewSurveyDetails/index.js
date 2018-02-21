@@ -11,7 +11,7 @@ export default class ViewSurveyDetails extends React.Component {
         this.state = {
             personList: '',
             householdSurveyStatus: false
-        }
+        };
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -19,7 +19,6 @@ export default class ViewSurveyDetails extends React.Component {
         return {
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
             headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
-            headerLeft: null,
             headerRight: (
                 <Button
                     buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
@@ -35,7 +34,7 @@ export default class ViewSurveyDetails extends React.Component {
                     onPress={params.goHome}
                 />
             )
-        }
+        };
     }
 
     state = {
@@ -43,10 +42,10 @@ export default class ViewSurveyDetails extends React.Component {
     }
     componentWillMount() {
         const { params } = this.props.navigation.state;
-        realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID)
+        realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID);
         this.setState({
             personList: realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID),
-            householdSurveyStatus: realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID).length > 0 ? false : true
+            householdSurveyStatus: !(realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID).length > 0)
         });
     }
 
@@ -58,18 +57,19 @@ export default class ViewSurveyDetails extends React.Component {
         dispatch({ type: 'goToDashboard' });
     }
     handleSubmit() {
+        const { dispatch } = this.props.navigation;
         const { params } = this.props.navigation.state;
-        const openSurveyCount = realm.objects('SurveyInformation').filtered('status = "open" && HouseholdID=$0', params.HouseholdID).length
+        const openSurveyCount = realm.objects('SurveyInformation').filtered('status = "open" && HouseholdID=$0', params.HouseholdID).length;
         if (openSurveyCount > 0) {
-            alert('Please save all forms for this household before submitting')
-        }
-        else {
-            const surveyList = realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID)
+            alert('Please save all forms for this household before submitting');
+        } else {
+            const surveyList = realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID);
             realm.write(() => {
                 _.forEach(surveyList, (survey) => {
                     realm.create('SurveyInformation', { surveyID: survey.surveyID, status: 'saved' }, true);
                 });
             });
+            dispatch({ type: 'goToRandomListScreen' });
         }
     }
     render() {
@@ -89,7 +89,7 @@ export default class ViewSurveyDetails extends React.Component {
                     }
                     {(this.state.householdSurveyStatus) &&
                         <Button
-                            disabled={true}
+                            disabled
                             buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
                             title={`Household survey for ${params.HouseholdID} completed`}
                             onPress={() =>
@@ -97,29 +97,27 @@ export default class ViewSurveyDetails extends React.Component {
                             }
                         />
                     }
-                    {this.state.personList.map(function (person, index) {
-                        return <View key={index}>
-                            {(person.AgeGroup != 'H') &&
-                                <View>
-                                    {(person.status != 'open') &&
-                                        <WalletHeader
-                                            headingIcon={person.Sex}
-                                            heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                            rightIcon='check-square-o'
-                                        />
-                                    }
-                                    {(person.status == 'open') &&
-                                        <WalletHeader
-                                            headingIcon={person.Sex}
-                                            heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                            rightIcon='pencil-square'
-                                            rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno })}
-                                        />
-                                    }
-                                </View>
-                            }
-                        </View>;
-                    }, this)}
+                    {this.state.personList.map((person, index) => (<View key={index}>
+                        {(person.AgeGroup != 'H') &&
+                            <View>
+                                {(person.status != 'open') &&
+                                    <WalletHeader
+                                        headingIcon={person.Sex}
+                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                        rightIcon='check-square-o'
+                                    />
+                                }
+                                {(person.status == 'open') &&
+                                    <WalletHeader
+                                        headingIcon={person.Sex}
+                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                        rightIcon='pencil-square'
+                                        rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno })}
+                                    />
+                                }
+                            </View>
+                        }
+                    </View>), this)}
                 </ScrollView>
             </View>
         );

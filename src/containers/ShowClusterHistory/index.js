@@ -4,7 +4,7 @@ import { Table, TableWrapper, Row, Rows, Col, Cols, Cell } from 'react-native-ta
 import _ from 'lodash';
 import realm from '../../providers/realm';
 
-export default class DashboardScreen extends React.Component {
+export default class ClusterHistoryScreen extends React.Component {
     static navigationOptions = {
         title: 'Cluster History',
         headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
@@ -30,10 +30,10 @@ export default class DashboardScreen extends React.Component {
         _.forEach(realm.objects('Cluster').filtered('status="deleted"'), (value, index) => {
             console.log("value", value);
             clusterHistory.push([value.clusterID,
-            'A : '+realm.objects('Household').filtered('Category="A" AND clusterID=$0', value.clusterID).length+
-            ' || B :  '+realm.objects('Household').filtered('Category="B" AND clusterID=$0', value.clusterID).length+
-            ' || C :  '+realm.objects('Household').filtered('Category="C" AND clusterID=$0', value.clusterID).length,
-            'A : 0 || B : 2 || C : 1'
+            'A : ' + realm.objects('Household').filtered('Category="A" AND clusterID=$0', value.clusterID).length +
+            ' || B :  ' + realm.objects('Household').filtered('Category="B" AND clusterID=$0', value.clusterID).length +
+            ' || C :  ' + realm.objects('Household').filtered('Category="C" AND clusterID=$0', value.clusterID).length,
+                'A : 0 || B : 2 || C : 1'
             ])
             console.log("clusterHistory", clusterHistory);
         });

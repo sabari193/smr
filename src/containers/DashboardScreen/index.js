@@ -71,7 +71,7 @@ export default class DashboardScreen extends React.Component {
   }
   showClusterHisttory() {
     var { dispatch } = this.props.navigation;
-    dispatch({ type: 'goToShowClusterHistory' });
+    dispatch({ type: 'ClusterHistoryScreen' });
   }
   generateRandomSurvey(props) {
     const { dispatch } = this.props.navigation;

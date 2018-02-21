@@ -7,7 +7,7 @@ import {
     WalletHeader, RadioButton, Divider, FormInput, Card
 } from '../../components/PocketUI/index';
 import realm from '../../providers/realm';
-import moment from 'moment'
+import moment from 'moment';
 export default class RandomListScreen extends React.Component {
     state = {
         selectedTab: 'RandomListScreen'
@@ -17,7 +17,7 @@ export default class RandomListScreen extends React.Component {
         this.state = {
             loading: true,
             surveyDetails: []
-        }
+        };
     }
     componentWillMount(props) {
         const { navigate } = this.props.navigation;
@@ -27,26 +27,29 @@ export default class RandomListScreen extends React.Component {
                 'Generate Random List',
                 'Do you want to generate random list ?',
                 [
-                    { text: 'Cancel', onPress: () => { navigate('Dashboard'); console.log('cancel generating random list') }, style: 'cancel' },
+                    { text: 'Cancel', onPress: () => { navigate('Dashboard'); console.log('cancel generating random list'); }, style: 'cancel' },
                     {
-                        text: 'Generate', onPress: () => {
+                        text: 'Generate',
+                        onPress: () => {
                             axios.post('http://www.allianceaircon.com/MRSurvey/surveydetails_request.php', {
-                                ClusterId: ClusterId
+                                ClusterId
                             })
                                 .then((response) => {
                                     if (!response.data.Message) {
                                         realm.write(() => {
                                             realm.create('RandomSurvey', { clusterID: ClusterId, surveyDetails: JSON.stringify(response.data.SurveyDetails), status: 'saved' });
 
-                                            _.forEach(response.data.SurveyDetails, function (value) {
-                                                _.forEach(value.IndividualInfo, function (individual) {
+                                            _.forEach(response.data.SurveyDetails, (value) => {
+                                                _.forEach(value.IndividualInfo, (individual) => {
                                                     individual.surveyID = Math.floor(new Date().getTime() * Math.random());
                                                     individual.HouseholdID = value.HouseholdID;
                                                     individual.status = 'open';
                                                     individual.surveyData = '';
+                                                    individual.HoueholdHead = value.HoueholdHead;
+                                                    individual.selectedIndividualCount = String(value.selectedIndividualCount);
                                                     realm.create('SurveyInformation', individual);
                                                 });
-                                                let householdEntry = {}
+                                                const householdEntry = {};
                                                 householdEntry.Sno = '';
                                                 householdEntry.AgeGroup = 'H';
                                                 householdEntry.Name = '';
@@ -54,13 +57,14 @@ export default class RandomListScreen extends React.Component {
                                                 householdEntry.HouseholdID = value.HouseholdID;
                                                 householdEntry.status = 'open';
                                                 householdEntry.surveyData = '';
+                                                householdEntry.HoueholdHead = '';
+                                                householdEntry.selectedIndividualCount = '';
                                                 householdEntry.surveyID = Math.floor(new Date().getTime() * Math.random());
                                                 realm.create('SurveyInformation', householdEntry);
                                             });
                                         });
                                         this.setState({ surveyDetails: response.data.SurveyDetails, loading: false });
-                                    }
-                                    else {
+                                    } else {
                                         alert('No List available');
                                         navigate('Dashboard');
                                     }
@@ -73,10 +77,10 @@ export default class RandomListScreen extends React.Component {
                 ],
                 { cancelable: false }
             );
-        }
-        else {
-            const surveyDatafromRealm = JSON.parse(JSON.stringify(realm.objects('RandomSurvey')))[0].surveyDetails;
-            this.setState({ loading: false, surveyDetails: JSON.parse(surveyDatafromRealm) });
+        } else {
+            const surveyDatafromRealm = JSON.parse(JSON.stringify(realm.objects('SurveyInformation').filtered('status="open" || status="inprogress"')));
+            const grouped = _.groupBy(surveyDatafromRealm, 'HouseholdID');
+            this.setState({ loading: false, surveyDetails: _.values(grouped) });
         }
     }
     render() {
@@ -91,23 +95,20 @@ export default class RandomListScreen extends React.Component {
                         <Text style={{ fontSize: 40, marginTop: 100 }}>Loading....</Text>
                     </View>
                 }
-                {(!this.state.loading) &&
+                {(!this.state.loading && this.state.surveyDetails) &&
                     <ScrollView style={{ backgroundColor: 'white', paddingTop: 20, paddingBottom: 20 }}>
-                        {this.state.surveyDetails.map(function (survey, index) {
-                            return <Card
-                                key={index}
-                                onPress={() => navigate('ViewSurveyDetails', { individualInfo: survey.IndividualInfo, HouseholdID: survey.HouseholdID })}
-                                title={`Head Name : ${survey.HoueholdHead}`}
-                                subTitle={`Household ID : ${survey.HouseholdID}`}
-                                number={`Count : ${survey.selectedIndividualCount}`}
-                                expiration={`Last Updated : ${moment().format('DD-MM-YYYY h:mm:ss a')}`}
-                                moreText='View'
-                            >
-                            </Card>
-                        }, this)}
+                        {this.state.surveyDetails.map((survey, index) => (<Card
+                            key={index}
+                            onPress={() => navigate('ViewSurveyDetails', { individualInfo: survey, HouseholdID: survey[0].HouseholdID })}
+                            title={`Head Name : ${survey[0].HoueholdHead}`}
+                            subTitle={`Household ID : ${survey[0].HouseholdID}`}
+                            number={`Count : ${survey[0].selectedIndividualCount}`}
+                            expiration={`Last Updated : ${moment().format('DD-MM-YYYY h:mm:ss a')}`}
+                            moreText='View'
+                        />), this)}
                     </ScrollView>
                 }
             </ScrollView>
-        )
+        );
     }
 }
