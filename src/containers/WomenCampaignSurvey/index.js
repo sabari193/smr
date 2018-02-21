@@ -39,17 +39,6 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         super(props);
         const { params } = this.props.navigation.state;
 
-        this.household_status = [
-            { value: '01', label: 'AGREED TO PARTICIPATE' },
-            { value: '02', label: 'NO HOUSEHOLD MEMBER AT HOME OR NO COMPETENT RESPONDENT AT HOME AT TIME OF VISIT' },
-            { value: '03', label: 'ENTIRE HOUSEHOLD ABSENT FOR EXTENDED PERIOD OF TIME' },
-            { value: '04', label: 'POSTPONED' },
-            { value: '05', label: 'REFUSED – DUE TO CONCERNS OF BLOOD COLLECTION' },
-            { value: '06', label: ' REFUSED – OTHER REASONS, WILL RESCHEDULE VISIT' },
-            { value: '07', label: 'REFUSED – OTHER REASONS, WILL NOT RESCHEDULE(NOT RELATED TO BLOOD COLLECTION)' },
-            { value: '08', label: 'INELIGIBLE' },
-            { value: '99', label: 'OTHER' }
-        ]
         this.optionList = [
             { value: '01', label: 'Yes' },
             { value: '02', label: 'No' },
@@ -59,118 +48,30 @@ export default class WomenCampaignSurvey extends ValidationComponent {
             { value: '01', label: 'Yes' },
             { value: '02', label: 'No' }];
 
-        this.relationship = [
-            { value: '01', label: 'HEAD OF HOUSEHOLD' },
-            { value: '02', label: 'WIFE OR HUSBAND' },
-            { value: '03', label: 'SON OR DAUGHTER' },
-            { value: '04', label: 'BROTHER OR SISTER' },
-            { value: '05', label: 'IN - LAW' },
-            { value: '06', label: 'PARENT/GRANDPARENT' },
-            { value: '05', label: 'OTHER RELATIVE' },
-            { value: '08', label: 'OTHER NOT RELATED' },
+        this.maritalStatus = [
+            { value: '01', label: 'Married' },
+            { value: '02', label: 'Unmarried' }
         ];
 
-        this.migratoryCategory = [
-            { value: '01', label: 'Urban slum with migration' },
-            { value: '02', label: 'Nomads' },
-            { value: '03', label: 'Brick kilns' },
-            { value: '04', label: 'Construction sites' },
-            { value: '99', label: 'Other' }];
-
-        this.householdCategory = [
-            { value: '01', label: 'Owned' },
-            { value: '02', label: 'Rented' },
-            { value: '03', label: 'Provided free of charge by relative/employer' },
-            { value: '99', label: 'Other' }];
-
-
-        this.religion = [
-            { value: '01', label: 'Hindu' },
-            { value: '02', label: 'Muslim' },
-            { value: '03', label: 'Christian' },
-            { value: '04', label: 'Sikh' },
-            { value: '05', label: 'Buddhist' },
-            { value: '06', label: 'Jain' },
-            { value: '07', label: 'No religion' },
-            { value: '99', label: 'Other religion' }
+        this.mrdoseoptions = [
+            { value: '01', label: 'Yes, Documented' },
+            { value: '02', label: 'Yes, Reported' },
+            { value: '03', label: 'No' },
+            { value: '88', label: 'Dont Know' }
         ];
 
-        this.headofHouseholdEducation = [
-            { value: '01', label: 'Professional or honors' },
-            { value: '02', label: 'Graduate or postgraduate' },
-            { value: '03', label: 'Intermediate/post-high school diploma' },
-            { value: '04', label: 'High School Certificate' },
-            { value: '05', label: 'Middle School Certificate' },
-            { value: '06', label: 'Primary School Certificate' },
-            { value: '07', label: 'Illiterate' },
-            { value: '88', label: 'Don’t know' }
-        ];
-
-
-        this.householdOccupation = [
-            { value: '01', label: 'Professional' },
-            { value: '02', label: 'Semi-professional' },
-            { value: '03', label: 'Clerical, Shop Owner, Farmer' },
-            { value: '04', label: 'Skilled Worker' },
-            { value: '05', label: 'Semi-Skilled Worker' },
-            { value: '06', label: 'Unskilled Worker' },
-            { value: '07', label: 'Unemployed' },
-            { value: '88', label: 'Don’t know' }
-        ];
-
-        this.caste = [
-            { value: '01', label: 'General' },
-            { value: '02', label: 'Schedule Caste (SC)' },
-            { value: '03', label: 'Schedule Tribe (ST)' },
-            { value: '04', label: 'Other Backward Class (OBC)' },
-            { value: '05', label: 'None of them' },
-            { value: '88', label: 'Don’t know' }
-        ];
-
-        this.housingMaterial = [
-            { value: '01', label: 'Kuchha' },
-            { value: '02', label: 'Pucca' },
-            { value: '03', label: 'Houseless households' },
-            { value: '88', label: 'Don’t know' },
-            { value: '99', label: 'Other' }
-        ];
-
-        this.healthFacility = [
-            { value: '01', label: 'PUBLIC HEALTH SECTOR' },
-            { value: '02', label: 'PRIVATE HEALTH SECTOR' },
-            { value: '99', label: 'OTHER' },
-            { value: '03', label: 'NONE' },
-        ];
         this.state = {
-            h1hhid: '',
-            h4avisit1: '01',
-            h6astatusvis1: '01',
-            h6astatusothsp: '',
-            h8respondentname: '',
-            h9relationship: '01',
-            h14migratory: '01',
-            h15migratorycat: '01',
-            h15migratothsp: '',
-            h16hhstatus: '01',
-            h16hhstatusothsp: '',
-            h17hhreligion: '01',
-            h18hhbpl: '01',
-            h19hheducation: '01',
-            h20hhoccupation: '01',
-            h21hhcaste: '01',
-            h22hhmaterials: '01',
-            h22hhmaterothsp: '',
-            h23afourwheeler: '01',
-            h23bbicycle: '01',
-            h23cmotorcycle: '01',
-            h23dland: '01',
-            h23emobile: '01',
-            h24mobile: '',
-            h25facility: '01',
-            h26vaxfacilitytyp: '01',
-            h31intcomments: '',
-            h27latitude: '',
-            h28longitude: ''
+            w2name: '',
+            w3dob: '',
+            w3adayunknown: '01',
+            w3bmonthunknown: '01',
+            w4age: '',
+            w5maritalstat: '01',
+            w6children : '',
+            w7livehhcampaign: '01',
+            w8mrcampaigndose: '',
+            w9mrvaxhistory: '01',
+            w11intcomments: '',            
         };
 
         this.styles = StyleSheet.create({
@@ -250,15 +151,21 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 </View> */}
 
                 <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>1. Household ID*</Text>
+                    <Text style={styles.headingLetter}>Women's Full Name</Text>
                     <FormInput
-                        ref="h1hhid"
-                        editable={false}
-                        value={params.HouseholdID}
+                       value={this.state.w2name}
+                       onChangeText={(name) => this.setState({ w2name: name })}
                     />
                 </View>
                 <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>3. Status of interview Result Code</Text>
+                    <Text style={styles.headingLetter}>On what day, month and year you born?</Text>
+                    <FormInput
+                        value={this.state.w3dob}
+                        onChangeText={(name) => this.setState({ w3dob: name })}
+                    />
+                </View>
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={styles.headingLetter}>Was day unknoun in date of birth?</Text>
                     <RadioForm
                         animation={false}
                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -266,29 +173,34 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         buttonColor={'#4B5461'}
                         formHorizontal={false}
                         labelHorizontal={true}
-                        radio_props={this.household_status}
+                        radio_props={this.optionListBoolean}
                         initial={0}
-                        onPress={(value) => { this.setState({ h6astatusvis1: value }); console.log(this.state) }}
+                        onPress={(value) => { this.setState({ w3adayunknown: value }); console.log(this.state) }}
                     />
-                    {(this.state.h6astatusvis1 == '99') &&
-                        <View>
-                            <Text style={styles.headingLetter}>Others Specify*</Text>
-                            <FormInput
-                                value={this.state.h6astatusothsp}
-                                onChangeText={(name) => this.setState({ h6astatusothsp: name })} />
-                        </View>
-                    }
                 </View >
-                {this.state.h6astatusvis1 === '01' &&
+                <View style={{ marginBottom: 20 }}>
+                    <Text style={styles.headingLetter}>Was month unknown in the date of birth?</Text>
+                    <RadioForm
+                        animation={false}
+                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                        buttonColor={'#4B5461'}
+                        formHorizontal={false}
+                        labelHorizontal={true}
+                        radio_props={this.optionListBoolean}
+                        initial={0}
+                        onPress={(value) => { this.setState({ w3bmonthunknown: value }); console.log(this.state) }}
+                    />
+                </View >
                     <View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>4. RESPONDENT TO HOUSEHOLD QUESTIONNAIRE*</Text>
+                            <Text style={styles.headingLetter}>How old are you?</Text>
                             <FormInput
-                                value={this.state.h8respondentname}
-                                onChangeText={(name) => this.setState({ h8respondentname: name })} />
+                                value={this.state.w4age}
+                                onChangeText={(name) => this.setState({ w4age: name })} />
                         </View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>5. RESPONDENT’S RELATIONSHIP TO HEAD OF HOUSEHOLD</Text>
+                            <Text style={styles.headingLetter}>What is your current marital status?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -296,13 +208,47 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 buttonColor={'#4B5461'}
                                 formHorizontal={false}
                                 labelHorizontal={true}
-                                radio_props={this.relationship}
+                                radio_props={this.maritalStatus}
                                 initial={0}
-                                onPress={(value) => { this.setState({ relationship: value }); console.log(this.state) }}
+                                onPress={(value) => { this.setState({ w5maritalstat: value }); console.log(this.state) }}
                             />
                         </View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>6. ARE YOU A MIGRATORY FAMILY?</Text>
+                            <Text style={styles.headingLetter}>How many children have you had?</Text>
+                            <FormInput
+                                value={this.state.w6children}
+                                onChangeText={(name) => this.setState({ w6children: name })} />
+                        </View>
+                        <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.headingLetter}>Were you living in this household when the MR campaign was occuring?</Text>
+                            <RadioForm
+                                animation={false}
+                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                buttonColor={'#4B5461'}
+                                formHorizontal={false}
+                                labelHorizontal={true}
+                                radio_props={this.optionListBoolean}
+                                initial={0}
+                                onPress={(value) => { this.setState({ w7livehhcampaign: value }); console.log(this.state) }}
+                            />
+                        </View>
+                        <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.headingLetter}>Did you receive a MR dose during the recent vaccination campaign?</Text>
+                            <RadioForm
+                                animation={false}
+                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                buttonColor={'#4B5461'}
+                                formHorizontal={false}
+                                labelHorizontal={true}
+                                radio_props={this.mrdoseoptions}
+                                initial={0}
+                                onPress={(value) => { this.setState({ w8mrcampaigndose: value }); console.log(this.state) }}
+                            />
+                        </View>
+                        <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.headingLetter}>Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -312,262 +258,16 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 labelHorizontal={true}
                                 radio_props={this.optionList}
                                 initial={0}
-                                onPress={(value) => { this.setState({ h14migratory: value }); console.log(this.state) }}
+                                onPress={(value) => { this.setState({ w9mrvaxhistory: value }); console.log(this.state) }}
                             />
                         </View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>6a. Migratory Type</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.migratoryCategory}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h15migratorycat: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        {(this.state.h15migratorycat == '99') &&
-                            <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>6b. Others Specify*</Text>
-                                <FormInput
-                                    value={this.state.h15migratothsp}
-                                    onChangeText={(name) => this.setState({ h15migratothsp: name })} />
-                            </View>
-                        }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>7. IS HOUSEHOLD ?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.householdCategory}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h16hhstatus: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>7a. WHAT IS THE RELIGION OF THE HOUSEHOLD?*</Text>
+                            <Text style={styles.headingLetter}>Interviewer's comment</Text>
                             <FormInput
-                                value={this.state.h16hhstatusothsp}
-                                onChangeText={(name) => this.setState({ h16hhstatusothsp: name })} />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>8. WHAT IS THE RELIGION OF THE HOUSEHOLD?*</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.religion}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h17hhreligion: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>9. DOES SOMEONE IN THE HOUSEHOLD HAVE A BPL CARD?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionList}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h18hhbpl: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>10. HEAD OF HOUSEHOLD’S EDUCATION</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.headofHouseholdEducation}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h19hheducation: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>11. HEAD OF HOUSEHOLD’S OCCUPATION</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.householdOccupation}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h20hhoccupation: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>12. WHAT IS YOUR CASTE?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.caste}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h21hhcaste: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>13. HOUSING MATERIALS</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.housingMaterial}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h22hhmaterials: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        {(this.state.h22hhmaterials == '99') &&
-                            <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>13a. Others Specify*</Text>
-                                <FormInput
-                                    value={this.state.h22hhmaterothsp}
-                                    onChangeText={(name) => this.setState({ h22hhmaterothsp: name })} />
-                            </View>
-                        }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>14a. Four wheeler vehicle</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h23afourwheeler: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>14b. Bicycle</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h23bbicycle: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>14c. Motorcycle</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h23cmotorcycle: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>14d. Land</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h23dland: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>14e. Mobile phone</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h23emobile: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        {(this.state.h23emobile) &&
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionListBoolean}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h24mobile: value }); console.log(this.state) }}
-                            />
-                        }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>16. WOULD YOU EVER TAKE YOUR CHILD TO FACILITY?*</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.optionList}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h25facility: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>17. WHAT TYPE OF HEALTH FACILITY WOULD YOU USUALLY TAKE YOUR CHILD TO FOR VACCINATIONS? </Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal={true}
-                                radio_props={this.healthFacility}
-                                initial={0}
-                                onPress={(value) => { this.setState({ h26vaxfacilitytyp: value }); console.log(this.state) }}
-                            />
-                        </View>
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>18. INTERVIEWER’S COMMENTS*</Text>
-                            <FormInput
-                                value={this.state.h31intcomments}
-                                onChangeText={(name) => this.setState({ h31intcomments: name })} />
+                                value={this.state.w11intcomments}
+                                onChangeText={(name) => this.setState({ w11intcomments: name })} />
                         </View>
                     </View>
-                }
             </ScrollView >
         );
     }
