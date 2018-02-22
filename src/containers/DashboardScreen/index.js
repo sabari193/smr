@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { View, StyleSheet, Text, Alert, ScrollView } from 'react-native';
 import _ from 'lodash';
 import { ProfileMenuHeader, colors } from '../../components/PocketUI/index';
@@ -6,28 +6,40 @@ import realm from '../../providers/realm';
 
 export default class DashboardScreen extends React.Component {
   constructor() {
-    super()
+    super();
     this.state = {
       clusterID: '',
       villageName: '',
       categoryA: '-',
       categoryB: '-',
       categoryC: '-',
+      TypeA: 0,
+      TypeB: 0,
+      TypeC: 0,
       clusterPrimaryID: '',
       surveyDetails: []
-    }
+    };
   }
   async loadCategoryDetails() {
-    let clusterDetails = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
+    const clusterDetails = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
     this.setState({
       clusterPrimaryID: clusterDetails[0].clusterPrimaryID,
       clusterID: clusterDetails[0].clusterID,
       villageName: clusterDetails[0].villageName,
       categoryA: realm.objects('Household').filtered('clusterID=$0 AND Category="A" AND Submitted="inprogress"', clusterDetails[0].clusterID).length,
       categoryB: realm.objects('Household').filtered('clusterID=$0 AND Category="B" AND Submitted="inprogress"', clusterDetails[0].clusterID).length,
-      categoryC: realm.objects('Household').filtered('clusterID=$0 AND Category="C" AND Submitted="inprogress"  ', clusterDetails[0].clusterID).length
+      categoryC: realm.objects('Household').filtered('clusterID=$0 AND Category="C" AND Submitted="inprogress"  ', clusterDetails[0].clusterID).length,
+      //TypeA: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0]
     });
-    console.log(realm.objects('Household').filtered(`clusterID=$0 AND Category="A"`, clusterDetails[0].clusterID).length)
+    if (realm.objects('BloodSample').length > 0) {
+      this.setState({
+        TypeA: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0].TypeA,
+        TypeB: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0].TypeB,
+        TypeC: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0].TypeC
+      });
+    }
+    console.log('BloodSample', realm.objects('BloodSample').length);
+    console.log(realm.objects('Household').filtered('clusterID=$0 AND Category="A"', clusterDetails[0].clusterID).length);
   }
   componentWillMount() {
     this.loadCategoryDetails();
@@ -39,14 +51,14 @@ export default class DashboardScreen extends React.Component {
       [
         { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
         {
-          text: 'OK', onPress: () => {
+          text: 'OK',
+          onPress: () => {
             realm.write(() => {
-              let householdDetails = JSON.parse(JSON.stringify(realm.objects('Household')));
+              const householdDetails = JSON.parse(JSON.stringify(realm.objects('Household')));
               _.forEach(householdDetails, (house) => {
                 realm.create('Household', { id: house.id, Submitted: 'deleted' }, true);
-
               });
-              let householdNumberDetails = JSON.parse(JSON.stringify(realm.objects('HouseholdNumber')));
+              const householdNumberDetails = JSON.parse(JSON.stringify(realm.objects('HouseholdNumber')));
               _.forEach(householdNumberDetails, (household) => {
                 realm.create('HouseholdNumber', { HouseholdPrimary: household.HouseholdPrimary, Submitted: 'deleted' }, true);
               });
@@ -63,14 +75,14 @@ export default class DashboardScreen extends React.Component {
         },
       ],
       { cancelable: false }
-    )
+    );
   }
   navigateToSignIn() {
-    var { dispatch } = this.props.navigation;
+    const { dispatch } = this.props.navigation;
     dispatch({ type: 'goToHome' });
   }
   showClusterHisttory() {
-    var { dispatch } = this.props.navigation;
+    const { dispatch } = this.props.navigation;
     dispatch({ type: 'ClusterHistoryScreen' });
   }
   generateRandomSurvey(props) {
@@ -117,7 +129,7 @@ export default class DashboardScreen extends React.Component {
           }
           <View>
             <Text style={styles.headingLetter1}>Census --> A : {this.state.categoryA} || B : {this.state.categoryB} || C : {this.state.categoryC}</Text>
-            <Text style={styles.headingLetter2}>Blood Collected --> A : 0 || B : 2 || C : 1</Text>
+            <Text style={styles.headingLetter2}>Blood Collected --> A : {this.state.TypeA} || B : {this.state.TypeB} || C : {this.state.TypeC}</Text>
           </View>
         </ScrollView>
       </View >

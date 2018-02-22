@@ -31,7 +31,8 @@ export default class CompletedSurveyDetails extends React.Component {
         super(props);
         this.state = {
             loading: false,
-            surveyDetails: []
+            surveyDetails: [],
+            surveyDatafromRealm: ''
         };
     }
 
@@ -39,9 +40,9 @@ export default class CompletedSurveyDetails extends React.Component {
         this.props.navigation.setParams({ handleSubmit: this.handleSubmit.bind(this) });
     }
     componentWillMount() {
-        const surveyDatafromRealm = JSON.parse(JSON.stringify(realm.objects('SurveyInformation').filtered('status="saved"')));
+        const surveyDatafromRealm = realm.objects('SurveyInformation').filtered('status="saved"');
         const grouped = _.groupBy(surveyDatafromRealm, 'HouseholdID');
-        this.setState({ loading: false, surveyDetails: _.values(grouped) });
+        this.setState({ loading: false, surveyDetails: _.values(grouped), surveyDatafromRealm });
     }
 
     handleSubmit() {
@@ -49,64 +50,66 @@ export default class CompletedSurveyDetails extends React.Component {
         /* NetInfo.isConnected.fetch().then(isConnected => {
             alert('isConnected', isConnected);
         }); */
-        Alert.alert(
-            'Submit Survey Information',
-            'Do you want to submit Survey Details for the cluster ',
-            [
-                { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                {
-                    text: 'OK',
-                    onPress: () => {
-                        this.setState({
-                            loading: true
-                        });
-                        const postData = {
-                            surveyDetails: this.state.surveyDetails
-                        };
-                        console.log('postData', postData);
-                        axios.post('http://www.allianceaircon.com/MRSurvey/Survey_information.php', postData)
-                            .then((response) => {
-                                console.log(response);
+        if (this.state.surveyDetails.length > 0) {
+            Alert.alert(
+                'Submit Survey Information',
+                'Do you want to submit Survey Details for the cluster ',
+                [
+                    { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                    {
+                        text: 'OK',
+                        onPress: () => {
+                            this.setState({
+                                loading: true
+                            });
+                            const postData = {
+                                surveyDetails: this.state.surveyDatafromRealm
+                            };
+                            axios.post('http://www.allianceaircon.com/MRSurvey/Survey_information.php', postData)
+                                .then((response) => {
+                                    console.log(response);
 
-                                //let idList = [];
-                                realm.write(() => {
-                                    _.forEach(realm.objects('SurveyInformation').filtered('status="saved"'), (survey) => {
-                                        console.log(survey.surveyID);
-                                        realm.create('SurveyInformation', { surveyID: survey.surveyID, status: 'completed' }, true);
-                                        console.log(JSON.parse(JSON.stringify(realm.objects('SurveyInformation'))));
+                                    //let idList = [];
+                                    realm.write(() => {
+                                        const completedSurvey = JSON.parse(JSON.stringify(realm.objects('SurveyInformation').filtered('status="saved"')));
+                                        _.forEach(completedSurvey, (survey) => {
+                                            realm.create('SurveyInformation', { surveyID: survey.surveyID, status: 'completed' }, true);
+                                        });
+                                        this.setState({
+                                            loading: false
+                                        });
+                                        dispatch({ type: 'goToDashboard' });
                                     });
+                                })
+                                .catch((error) => {
+                                    console.log(JSON.stringify(error));
+                                    if (JSON.stringify(error).status == '503' || JSON.stringify(error).status == '503') {
+                                        if (realm.objects('ServerUnavailable').length == 0) {
+                                            realm.write(() => {
+                                                realm.create('ServerUnavailable', { updatedTimeStamp: new Date() });
+                                            });
+                                        } else {
+                                            const lastUpdatedTime = JSON.parse(JSON.stringify(realm.objects('ServerUnavailable')))[0].updatedTimeStamp;
+                                            const timeDifference = Math.floor((new Date().getTime() - lastUpdatedTime) / (1000 * 60));
+                                            if (timeDifference > 15) {
+
+                                            }
+                                        }
+                                    }
                                     this.setState({
                                         loading: false
                                     });
                                     dispatch({ type: 'goToDashboard' });
                                 });
-                            })
-                            .catch((error) => {
-                                console.log(JSON.stringify(error));
-                                if (JSON.stringify(error).status == '503' || JSON.stringify(error).status == '503') {
-                                    if (realm.objects('ServerUnavailable').length == 0) {
-                                        realm.write(() => {
-                                            realm.create('ServerUnavailable', { updatedTimeStamp: new Date() });
-                                        });
-                                    } else {
-                                        const lastUpdatedTime = JSON.parse(JSON.stringify(realm.objects('ServerUnavailable')))[0].updatedTimeStamp;
-                                        const timeDifference = Math.floor((new Date().getTime() - lastUpdatedTime) / (1000 * 60));
-                                        if (timeDifference > 15) {
-
-                                        }
-                                    }
-                                }
-                                this.setState({
-                                    loading: false
-                                });
-                                dispatch({ type: 'goToDashboard' });
-                            });
-                        console.log('submit clutser information', postData);
-                    }
-                },
-            ],
-            { cancelable: false }
-        );
+                            console.log('submit clutser information', postData);
+                        }
+                    },
+                ],
+                { cancelable: false }
+            );
+        } else {
+            alert('No Forms to submit');
+        }
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -115,7 +118,7 @@ export default class CompletedSurveyDetails extends React.Component {
             <ScrollView style={{ backgroundColor: 'white', paddingTop: 20, paddingBottom: 20 }}>
                 {this.state.surveyDetails.map((survey, index) => (<Card
                     key={index}
-                    onPress={() => navigate('ViewSurveyDetails', { individualInfo: survey[0].IndividualInfo, HouseholdID: survey[0].HouseholdID })}
+                    onPress={() => navigate('ViewCompletedSurveyDetails', { individualInfo: survey[0].IndividualInfo, HouseholdID: survey[0].HouseholdID })}
                     title={`Head Name : ${survey[0].HoueholdHead}`}
                     subTitle={`Household ID : ${survey[0].HouseholdID}`}
                     number={`Count : ${survey[0].selectedIndividualCount}`}

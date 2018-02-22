@@ -99,10 +99,10 @@ export default class RandomListScreen extends React.Component {
                     <ScrollView style={{ backgroundColor: 'white', paddingTop: 20, paddingBottom: 20 }}>
                         {this.state.surveyDetails.map((survey, index) => (<Card
                             key={index}
-                            onPress={() => navigate('ViewSurveyDetails', { individualInfo: survey, HouseholdID: survey[0].HouseholdID })}
-                            title={`Head Name : ${survey[0].HoueholdHead}`}
-                            subTitle={`Household ID : ${survey[0].HouseholdID}`}
-                            number={`Count : ${survey[0].selectedIndividualCount}`}
+                            onPress={() => navigate('ViewSurveyDetails', { individualInfo: survey, HouseholdID: survey.HouseholdID ? survey.HouseholdID : survey[0].HouseholdID })}
+                            title={`Head Name : ${survey.HoueholdHead ? survey.HoueholdHead : survey[0].HoueholdHead}`}
+                            subTitle={`Household ID : ${survey.HouseholdID ? survey.HouseholdID : survey[0].HouseholdID}`}
+                            number={`Count : ${survey.selectedIndividualCount ? survey.selectedIndividualCount : survey[0].selectedIndividualCount}`}
                             expiration={`Last Updated : ${moment().format('DD-MM-YYYY h:mm:ss a')}`}
                             moreText='View'
                         />), this)}

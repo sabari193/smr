@@ -53,7 +53,9 @@ const navReducer = (state, action) => {
         case 'ClusterHistoryScreen':
             newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'ClusterHistoryScreen' }), state);
             break;
-
+            case 'ViewCompletedSurveyDetails':
+            newState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'ViewCompletedSurveyDetails' }), state);
+            break;
         default:
             newState = AppNavigator.router.getStateForAction(action, state);
             break;

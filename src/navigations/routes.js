@@ -9,6 +9,7 @@ import ViewHouseholdDetails from '../containers/ViewHouseholdDetails/index';
 import EditIndividual from '../containers/EditIndividual/index';
 import RandomListScreen from '../containers/RandomListScreen/index';
 import ViewSurveyDetails from '../containers/ViewSurveyDetails/index';
+import ViewCompletedSurveyDetails from '../containers/ViewCompletedSurveyDetails/index';
 import HouseholdSurvey from '../containers/HouseholdSurvey/index';
 import CompletedSurveyDetails from '../containers/CompletedSurveyDetails/index';
 import WomenCampaignSurvey from '../containers/WomenCampaignSurvey/index';
@@ -37,7 +38,6 @@ const Routes = {
     HouseHold: {
         screen: HouseHoldScreen,
         navigationOptions: {
-            title: 'Add Household',
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
             headerStyle: { height: 60, padding: 10, backgroundColor: '#4c9689' }
         }
@@ -64,6 +64,9 @@ const Routes = {
     },
     ViewSurveyDetails: {
         screen: ViewSurveyDetails
+    },
+    ViewCompletedSurveyDetails: {
+        screen: ViewCompletedSurveyDetails
     },
     HouseholdForm: {
         screen: HouseholdSurvey

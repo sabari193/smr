@@ -114,7 +114,21 @@ SurveyInformation.schema = {
     }
 };
 
+class BloodSampleSchema extends Realm.Object { }
+BloodSampleSchema.schema = {
+    name: 'BloodSample',
+    primaryKey: 'clusterID',
+    properties: {
+        clusterID: { type: 'string' },
+        Submitted: { type: 'string', default: 'active' },
+        TypeA: { type: 'int', default: 0 },
+        TypeB: { type: 'int', default: 0 },
+        TypeC: { type: 'int', default: 0 }
+    }
+};
+
 export default new Realm({
     schema: [Cluster, HouseholdSchema, HouseholdNumberSchema,
-        RandomSurveySchema, SurveyDetailsSchema, SurveyInformation]
+        RandomSurveySchema, SurveyDetailsSchema,
+        SurveyInformation, BloodSampleSchema]
 });

@@ -4,13 +4,12 @@ import { Card, colors, WalletHeader, MenuHeader, Button, Text } from '../../comp
 import realm from '../../providers/realm';
 import _ from 'lodash';
 
-export default class ViewSurveyDetails extends React.Component {
+export default class ViewCompletedSurveyDetails extends React.Component {
     constructor(props) {
         super(props);
         const { params } = this.props.navigation.state;
         this.state = {
-            personList: '',
-            householdSurveyStatus: false
+            personList: ''
         };
     }
 
@@ -19,13 +18,6 @@ export default class ViewSurveyDetails extends React.Component {
         return {
             headerTitleStyle: { fontSize: 23, fontWeight: 'bold' },
             headerStyle: { height: 60, borderWidth: 1, borderBottomColor: 'white', padding: 10 },
-            headerRight: (
-                <Button
-                    buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
-                    title='Save'
-                    onPress={params.handleSubmit}
-                />
-            ),
             headerLeft: (
                 <Button
                     buttonStyle={{ width: 100, height: 100, backgroundColor: '#4c9689', marginRight: 10 }}
@@ -38,14 +30,13 @@ export default class ViewSurveyDetails extends React.Component {
     }
 
     state = {
-        selectedTab: 'ViewSurveyDetails'
+        selectedTab: 'ViewCompletedSurveyDetails'
     }
     componentWillMount() {
         const { params } = this.props.navigation.state;
-        console.log(realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID));
+        realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID);
         this.setState({
-            personList: realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID),
-            householdSurveyStatus: !(realm.objects('SurveyInformation').filtered('AgeGroup = "H" && status = "open" && HouseholdID=$0', params.HouseholdID).length > 0)
+            personList: realm.objects('SurveyInformation').filtered('HouseholdID=$0', params.HouseholdID)
         });
     }
 
@@ -59,7 +50,7 @@ export default class ViewSurveyDetails extends React.Component {
     handleSubmit() {
         const { dispatch } = this.props.navigation;
         const { params } = this.props.navigation.state;
-        const openSurveyCount = realm.objects('SurveyInformation').filtered('status = "open" && HouseholdID=$0', params.HouseholdID).length;
+        const openSurveyCount = realm.objects('SurveyInformation').filtered('status = "saved" && HouseholdID=$0', params.HouseholdID).length;
         if (openSurveyCount > 0) {
             alert('Please save all forms for this household before submitting');
         } else {
@@ -78,40 +69,22 @@ export default class ViewSurveyDetails extends React.Component {
         return (
             <View style={styles.container}>
                 <ScrollView style={{ backgroundColor: 'white' }}>
-                    {(!this.state.householdSurveyStatus) &&
-                        <Button
-                            buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                            title={`Household survey for ${params.HouseholdID}`}
-                            onPress={() =>
-                                navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
-                            }
-                        />
-                    }
-                    {(this.state.householdSurveyStatus) &&
-                        <Button
-                            disabled
-                            buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
-                            title={`Household survey for ${params.HouseholdID} completed`}
-                        />
-                    }
+                    <Button
+                        buttonStyle={{ marginTop: 75, marginBottom: 30 }}
+                        title={`Household survey for ${params.HouseholdID}`}
+                        onPress={() =>
+                            navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
+                        }
+                    />
                     {this.state.personList.map((person, index) => (<View key={index}>
                         {(person.AgeGroup != 'H') &&
                             <View>
-                                {(person.status != 'open') &&
-                                    <WalletHeader
-                                        headingIcon={person.Sex}
-                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                        rightIcon='check-square-o'
-                                    />
-                                }
-                                {(person.status == 'open') &&
-                                    <WalletHeader
-                                        headingIcon={person.Sex}
-                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                        rightIcon='pencil-square'
-                                        rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno })}
-                                    />
-                                }
+                                <WalletHeader
+                                    headingIcon={person.Sex}
+                                    heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                    rightIcon='pencil-square'
+                                    rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno })}
+                                />
                             </View>
                         }
                     </View>), this)}
