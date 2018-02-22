@@ -268,8 +268,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ w2aconsent: value }); console.log(this.state); }}
                     />
                 </View>
-
-
+                { this.state.w2aconsent === '01' &&
+                <View>
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Did you receive a MR dose during the recent vaccination campaign?</Text>
                     <RadioForm
@@ -332,7 +332,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(w6children) => this.setState({ w6children })}
                     />
                 </View>
-
+                { this.state.surveyType === '02' &&
+                <View>
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Were you living in this household when the MR campaign was occuring?</Text>
                     <RadioForm
@@ -362,7 +363,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ w8mrcampaigndose: value }); console.log(this.state); }}
                     />
                 </View>
-
+                </View>
+                }
 
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
@@ -378,7 +380,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ w9mrvaxhistory: value }); console.log(this.state); }}
                     />
                 </View>
-
+                </View>
+                }
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Interviewer's comment</Text>
                     <FormInput
@@ -386,7 +389,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(name) => this.setState({ w11intcomments: name })}
                     />
                 </View>
-
+                { this.state.w2aconsent === '01' &&
+                <View>
                 <View>
                     <Text style={styles.headingLetter}>SPECIMEN COLLECTION</Text>
                 </View>
@@ -421,8 +425,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ ws1ascollectno: value }); console.log(this.state); }}
                     />
                 </View>
-
-
+                
+                { this.state.ws1ascollectno === '99' &&
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Specify other reason</Text>
                     <FormInput
@@ -430,7 +434,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(ws1bscollectoth) => this.setState({ ws1bscollectoth })}
                     />
                 </View>
-
+                }
 
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>How specimen was collected?</Text>
@@ -477,7 +481,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                     />
                 </View>
 
-
+                { this.state.ws6sproblem === '99' && 
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Specify other reason</Text>
                     <FormInput
@@ -485,9 +489,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(ws6asprobsp) => this.setState({ ws6asprobsp })}
                     />
                 </View>
-
+                }
                 <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>Specimen collection problem?</Text>
+                    <Text style={styles.headingLetter}>Was a DBS sample collected?</Text>
                     <RadioForm
                         animation={false}
                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -515,7 +519,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ ws7adcollectno: value }); console.log(this.state); }}
                     />
                 </View>
-
+                { this.state.ws7adcollectno === '99' &&
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Specify other reason</Text>
                     <FormInput
@@ -523,7 +527,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(ws7bdcollectoth) => this.setState({ ws7bdcollectoth })}
                     />
                 </View>
-
+                }
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS1?</Text>
                     <RadioForm
@@ -613,7 +617,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onPress={(value) => { this.setState({ ws13dproblem: value }); console.log(this.state); }}
                     />
                 </View>
-
+                { this.state.ws13dproblem === '99' &&
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Specify other reason</Text>
                     <FormInput
@@ -621,7 +625,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
                     />
                 </View>
-
+                }
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Interviewer observation (Related to Blood Collection)</Text>
                     <FormInput
@@ -629,8 +633,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
                     />
                 </View>
-
-
+                </View>
+                }
             </ScrollView >
         );
     }
