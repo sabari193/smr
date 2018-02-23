@@ -143,6 +143,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
 
         //Fieldname to be added
         this.state = {
+            clusterID: '',
             editedField: false,
             surveyType: '',
             w2name: '',
@@ -212,17 +213,32 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         dispatch({ type: 'goToDashboard' });
     }
     componentWillMount() {
+        const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         this.props.navigation.setParams({ handleSubmit: this.onPress.bind(this), goHome: this._goHome.bind(this) });
         const { params } = this.props.navigation.state;
         const surveyType = realm.objects('Cluster').filtered('status = "active"')[0].surveyType;
-        const womenSurveyData = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID);
+        const womenSurveyData = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && AgeGroup = $1 && HouseholdID=$2', params.person.Sno, params.person.AgeGroup, params.HouseholdID);
         console.log('womenSurveyData', JSON.parse(JSON.stringify(womenSurveyData)));
         if (womenSurveyData.length > 0) {
             const surveyDataFromDB = JSON.parse(JSON.parse(JSON.stringify(womenSurveyData))[0].surveyData);
             this.setState(surveyDataFromDB);
             this.setState({ editedField: true });
         }
-        this.setState({ surveyType });
+        this.setState({ surveyType, clusterID });
+    }
+
+    componentDidMount() {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                this.setState({
+                    accuracy: position.coords.accuracy,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            },
+            (error) => console.log('location is not available'),
+            { enableHighAccuracy: false, timeout: 30000 }
+        );
     }
 
     onChange(value) {
@@ -235,21 +251,19 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         if (this.isFormValid()) {
             this.setState({
                 h1hhid: params.HouseholdID,
-                h4avisit1: moment().format('MM-DD-YYY h:mm:ss a'),
-                h27latitude: '2.2',
-                h28longitude: '3.3'
+                updatedTime: moment().format('MM-DD-YYY h:mm:ss a')
             });
             let surveyID;
             if (this.state.editedField) {
                 console.log(JSON.parse(JSON.stringify(realm.objects('SurveyInformation').filtered('status="saved"'))));
-                surveyID = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
+                surveyID = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1 && AgeGroup=$2', params.person.Sno, params.HouseholdID, params.person.AgeGroup)[0].surveyID;
                 realm.write(() => {
                     realm.create('SurveyInformation', { surveyID, surveyData: JSON.stringify(this.state), status: 'saved' }, true);
                 });
                 this.removeBloodSampleCount();
                 navigate('CompletedSurveyDetails');
             } else {
-                surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
+                surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && HouseholdID=$1 && AgeGroup=$2', params.person.Sno, params.HouseholdID, params.person.AgeGroup)[0].surveyID;
                 realm.write(() => {
                     realm.create('SurveyInformation', { surveyID, surveyData: JSON.stringify(this.state), status: 'inprogress' }, true);
                 });
@@ -270,23 +284,25 @@ export default class WomenCampaignSurvey extends ValidationComponent {
     addBloodSampleCount() {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         realm.write(() => {
-            if (realm.objects('BloodSample').length > 0) {
+            if (realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID).length > 0) {
+                const bloodsampleid = realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID)[0].id;
                 const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeC;
                 if (this.state.ws1scollect === '01' || this.state.ws6asprobsp === '01') {
-                    realm.create('BloodSample', { clusterID, TypeC: bloodSampleData + 1 }, true);
+                    realm.create('BloodSample', { id: bloodsampleid, TypeC: bloodSampleData + 1 }, true);
                 }
             } else {
-                realm.create('BloodSample', { clusterID, TypeC: 1 });
+                realm.create('BloodSample', { id: new Date().getTime(), clusterID, TypeC: 1 });
             }
         });
     }
     removeBloodSampleCount() {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeC;
+        const bloodsampleid = realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID)[0].id;
         realm.write(() => {
             if (this.state.ws1scollect !== '01' && this.state.ws6asprobsp !== '01') {
                 if (bloodSampleData.TypeC > 0) {
-                    realm.create('BloodSample', { clusterID, TypeC: bloodSampleData - 1 }, true);
+                    realm.create('BloodSample', { id: bloodsampleid, TypeC: bloodSampleData - 1 }, true);
                 }
             }
         });
@@ -300,7 +316,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 </View> */}
 
                 <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>Women's Full Name</Text>
+                    <Text style={styles.headingLetter}>1. Women's Full Name</Text>
                     <FormInput
                         value={this.state.w2name}
                         onChangeText={(w2name) => this.setState({ w2name })}
@@ -324,7 +340,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 {this.state.w2aconsent === '01' &&
                     <View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>Do you know your date of birth?</Text>
+                            <Text style={styles.headingLetter}>3. Do you know your date of birth?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -339,7 +355,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         </View>
                         {this.state.w3dob === '01' &&
                             <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>Date of Birth*</Text>
+                                <Text style={styles.headingLetter}>3A. Date of Birth*</Text>
                                 <FormInput
                                     value={this.state.w3adobdt}
                                     onChangeText={(w2name) => this.setState({ w2name })}
@@ -352,7 +368,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         {this.state.w3dob === '02' &&
                             <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>How old are you?</Text>
+                                <Text style={styles.headingLetter}>4. How old are you?</Text>
                                 <FormInput
                                     keyboardType='numeric'
                                     value={this.state.w4age}
@@ -361,22 +377,23 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                             </View>
                         }
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>What is your current marital status?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal
-                                radio_props={this.maritalStatusindex ? this.maritalStatusindex : 0}
-                                initial={0}
-                                onPress={(value, index) => { this.setState({ w5maritalstat: value, maritalStatusindex: index }); console.log(this.state); }}
-                            />
+                            <Text style={styles.headingLetter}>5. What is your current marital status?</Text>
+							<RadioForm
+                                        animation={false}
+                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                        buttonColor={'#4B5461'}
+                                        formHorizontal={false}
+                                        labelHorizontal
+                                        radio_props={this.maritalStatus}
+                                        initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : 0}
+                                        onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
+							/>
+                            
                         </View>
 
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>How many children have you had?</Text>
+                            <Text style={styles.headingLetter}>6. How many children have you had?</Text>
                             <FormInput
                                 keyboardType='numeric'
                                 maxLength={1}
@@ -387,7 +404,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         {this.state.surveyType === '02' &&
                             <View>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Were you living in this household when the MR campaign was occuring?</Text>
+                                    <Text style={styles.headingLetter}>7. Were you living in this household when the MR campaign was occuring?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -402,7 +419,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Did you receive a MR dose during the recent vaccination campaign?</Text>
+                                    <Text style={styles.headingLetter}>8. Did you receive a MR dose during the recent vaccination campaign?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -419,7 +436,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
 
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
+                            <Text style={styles.headingLetter}>9. Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -435,7 +452,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                     </View>
                 }
                 <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>Interviewer's comment</Text>
+                    <Text style={styles.headingLetter}>11. Interviewer's comment</Text>
                     <FormInput
                         value={this.state.w11intcomments}
                         onChangeText={(name) => this.setState({ w11intcomments: name })}
@@ -448,7 +465,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         </View>
 
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>Was a Capillary Liquid Blood sample collected?</Text>
+                            <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -458,14 +475,21 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.optionList}
                                 initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 0}
-                                onPress={(value, index) => { this.setState({ ws1scollect: value, ws1scollectindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ ws1scollect: value, ws1scollectindex: index });
+                                    if (value === '01') {
+                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                    } else {
+                                        this.state.specimenCapillaryID = '';
+                                    }
+                                }}
                             />
                         </View>
 
                         {this.state.ws1scollect === '02' &&
                             <View>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Specify reason?</Text>
+                                    <Text style={styles.headingLetter}>1A. Specify reason?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -481,7 +505,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
 
                                 {this.state.ws1ascollectno === '99' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>Specify other reason</Text>
+                                        <Text style={styles.headingLetter}>1B. Specify other reason</Text>
                                         <FormInput
                                             value={this.state.ws1bscollectoth}
                                             onChangeText={(ws1bscollectoth) => this.setState({ ws1bscollectoth })}
@@ -492,8 +516,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         {this.state.ws1scollect === '01' &&
                             <View>
+                                <Text style={styles.headingLetter}>{`Specimen Capillary ID: ${this.state.specimenCapillaryID}`}</Text>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>How specimen was collected?</Text>
+                                    <Text style={styles.headingLetter}>1C. How specimen was collected?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -508,7 +533,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Specimen quality?</Text>
+                                    <Text style={styles.headingLetter}>5. Specimen quality?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -523,7 +548,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Specimen collection problem?</Text>
+                                    <Text style={styles.headingLetter}>6. Specimen collection problem?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -539,7 +564,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
 
                                 {this.state.ws6sproblem === '99' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>Specify other reason</Text>
+                                        <Text style={styles.headingLetter}>6A. Specify other reason</Text>
                                         <FormInput
                                             value={this.state.ws6asprobsp}
                                             onChangeText={(ws6asprobsp) => this.setState({ ws6asprobsp })}
@@ -549,7 +574,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                             </View>
                         }
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>Was a DBS sample collected?</Text>
+                            <Text style={styles.headingLetter}>7. Was a DBS sample collected?</Text>
                             <RadioForm
                                 animation={false}
                                 style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -559,13 +584,20 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.dbssampleoptions}
                                 initial={this.state.ws7dcollectindex ? this.state.ws7dcollectindex : 0}
-                                onPress={(value, index) => { this.setState({ ws7dcollect: value, ws7dcollectindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ ws7dcollect: value, ws7dcollectindex: index });
+                                    if (value === '01') {
+                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                    } else {
+                                        this.state.specimenDBSID = '';
+                                    }
+                                }}
                             />
                         </View>
                         {this.state.ws7dcollect !== '01' &&
                             <View>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Specify reason?</Text>
+                                    <Text style={styles.headingLetter}>7A. Specify reason?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -580,7 +612,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
                                 {this.state.ws7adcollectno === '99' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>Specify other reason</Text>
+                                        <Text style={styles.headingLetter}>7B. Specify other reason</Text>
                                         <FormInput
                                             value={this.state.ws7bdcollectoth}
                                             onChangeText={(ws7bdcollectoth) => this.setState({ ws7bdcollectoth })}
@@ -591,8 +623,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         {this.state.ws7dcollect === '01' &&
                             <View>
+                                <Text style={styles.headingLetter}>{`Specimen DBS ID: ${this.state.specimenDBSID}`}</Text>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Number of spots collected?</Text>
+                                    <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -607,7 +640,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS1?</Text>
+                                    <Text style={styles.headingLetter}>12A. SPECIMEN QUALITY DBS1?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -622,7 +655,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS2?</Text>
+                                    <Text style={styles.headingLetter}>12B. SPECIMEN QUALITY DBS2?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -637,7 +670,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS3?</Text>
+                                    <Text style={styles.headingLetter}>12C. SPECIMEN QUALITY DBS3?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -652,7 +685,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS4?</Text>
+                                    <Text style={styles.headingLetter}>12D. SPECIMEN QUALITY DBS4?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -667,7 +700,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>SPECIMEN QUALITY DBS5?</Text>
+                                    <Text style={styles.headingLetter}>12E. SPECIMEN QUALITY DBS5?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -682,7 +715,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
 
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>Specimen collection problem?</Text>
+                                    <Text style={styles.headingLetter}>13. Specimen collection problem?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -697,7 +730,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
                                 {this.state.ws13dproblem === '99' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>Specify other reason</Text>
+                                        <Text style={styles.headingLetter}>13A. Specify other reason</Text>
                                         <FormInput
                                             value={this.state.ws13adprobsp}
                                             onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
@@ -707,7 +740,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                             </View>
                         }
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>Interviewer observation (Related to Blood Collection)</Text>
+                            <Text style={styles.headingLetter}>15. Interviewer observation (Related to Blood Collection)</Text>
                             <FormInput
                                 value={this.state.ws13adprobsp}
                                 onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}

@@ -29,9 +29,8 @@ export default class DashboardScreen extends React.Component {
       categoryA: realm.objects('Household').filtered('clusterID=$0 AND Category="A" AND Submitted="inprogress"', clusterDetails[0].clusterID).length,
       categoryB: realm.objects('Household').filtered('clusterID=$0 AND Category="B" AND Submitted="inprogress"', clusterDetails[0].clusterID).length,
       categoryC: realm.objects('Household').filtered('clusterID=$0 AND Category="C" AND Submitted="inprogress"  ', clusterDetails[0].clusterID).length,
-      //TypeA: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0]
     });
-    if (realm.objects('BloodSample').length > 0) {
+    if (realm.objects('BloodSample').filtered('Submitted="active"').length > 0) {
       this.setState({
         TypeA: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0].TypeA,
         TypeB: realm.objects('BloodSample').filtered('clusterID=$0 AND Submitted="active"', clusterDetails[0].clusterID)[0].TypeB,
@@ -69,6 +68,10 @@ export default class DashboardScreen extends React.Component {
               realm.delete(realm.objects('RandomSurvey'));
               realm.delete(realm.objects('SurveyDetails'));
               realm.delete(realm.objects('SurveyInformation'));
+              if (realm.objects('BloodSample').length > 0) {
+                const bloodsampleid = realm.objects('BloodSample').filtered('Submitted="active" || Submitted="completed" && clusterID=$0', this.state.clusterID)[0].id;
+                realm.create('BloodSample', { id: bloodsampleid, Submitted: 'deleted' }, true);
+              }
               this.navigateToSignIn();
             });
           }

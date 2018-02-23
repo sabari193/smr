@@ -79,42 +79,48 @@ export default class ViewSurveyDetails extends React.Component {
             <View style={styles.container}>
                 <ScrollView style={{ backgroundColor: 'white' }}>
                     {(!this.state.householdSurveyStatus) &&
-                        <Button
-                            buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                            title={`Household survey for ${params.HouseholdID}`}
-                            onPress={() =>
-                                navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
-                            }
-                        />
+                        <View>
+                            <Button
+                                buttonStyle={{ marginTop: 75, marginBottom: 30 }}
+                                title={`Household survey for ${params.HouseholdID}`}
+                                onPress={() =>
+                                    navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
+                                }
+                            />
+                            <Text style={{ fontSize: 25, marginLeft: 30 }}> {`${this.state.personList.length - 1} Member(s) Available`} </Text>
+                        </View>
                     }
                     {(this.state.householdSurveyStatus) &&
-                        <Button
-                            disabled
-                            buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
-                            title={`Household survey for ${params.HouseholdID} completed`}
-                        />
+                        <View>
+                            <Button
+                                disabled
+                                buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
+                                title={`Household survey for ${params.HouseholdID} completed`}
+                            />
+                            {this.state.personList.map((person, index) => (<View key={index}>
+                                {(person.AgeGroup != 'H') &&
+                                    <View>
+                                        {(person.status != 'open') &&
+                                            <WalletHeader
+                                                headingIcon={person.Sex}
+                                                heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                                rightIcon='check-square-o'
+                                            />
+                                        }
+                                        {(person.status == 'open') &&
+                                            <WalletHeader
+                                                headingIcon={person.Sex}
+                                                heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                                rightIcon='pencil-square'
+                                                rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) })}
+                                            />
+                                        }
+                                    </View>
+                                }
+                            </View>), this)}
+                        </View>
                     }
-                    {this.state.personList.map((person, index) => (<View key={index}>
-                        {(person.AgeGroup != 'H') &&
-                            <View>
-                                {(person.status != 'open') &&
-                                    <WalletHeader
-                                        headingIcon={person.Sex}
-                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                        rightIcon='check-square-o'
-                                    />
-                                }
-                                {(person.status == 'open') &&
-                                    <WalletHeader
-                                        headingIcon={person.Sex}
-                                        heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
-                                        rightIcon='pencil-square'
-                                        rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, Sno: person.Sno })}
-                                    />
-                                }
-                            </View>
-                        }
-                    </View>), this)}
+
                 </ScrollView>
             </View>
         );

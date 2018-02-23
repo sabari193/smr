@@ -26,16 +26,18 @@ export default class ClusterHistoryScreen extends React.Component {
             ['123', 'A : 0 || B : 2 || C : 1', 'A : 0 || B : 2 || C : 1'],
             ['123', 'A : 0 || B : 2 || C : 1', 'A : 0 || B : 2 || C : 1']
         ];
-        let clusterHistory = [];
+        const clusterHistory = [];
         _.forEach(realm.objects('Cluster').filtered('status="deleted"'), (value, index) => {
-            console.log("value", value);
+            console.log('value', value);
             clusterHistory.push([value.clusterID,
-            'A : ' + realm.objects('Household').filtered('Category="A" AND clusterID=$0', value.clusterID).length +
-            ' || B :  ' + realm.objects('Household').filtered('Category="B" AND clusterID=$0', value.clusterID).length +
-            ' || C :  ' + realm.objects('Household').filtered('Category="C" AND clusterID=$0', value.clusterID).length,
-                'A : 0 || B : 2 || C : 1'
-            ])
-            console.log("clusterHistory", clusterHistory);
+            `A : ${realm.objects('Household').filtered('Category="A" AND clusterID=$0', value.clusterID).length
+            } || B :  ${realm.objects('Household').filtered('Category="B" AND clusterID=$0', value.clusterID).length
+            } || C :  ${realm.objects('Household').filtered('Category="C" AND clusterID=$0', value.clusterID).length}`,
+            `A : ${realm.objects('BloodSample').filtered('clusterID=$0', value.clusterID)[0].TypeA
+            } || B : ${realm.objects('BloodSample').filtered('clusterID=$0', value.clusterID)[0].TypeB
+            } || C :  ${realm.objects('BloodSample').filtered('clusterID=$0', value.clusterID)[0].TypeC}`
+            ]);
+            console.log('clusterHistory', clusterHistory);
         });
         return (
             <View>
@@ -46,7 +48,7 @@ export default class ClusterHistoryScreen extends React.Component {
                     </TableWrapper>
                 </Table>
             </View>
-        )
+        );
     }
 }
 
@@ -55,4 +57,4 @@ const styles = StyleSheet.create({
     row: { height: 35 },
     rowtext: { fontSize: 25, textAlign: 'center', color: 'black' },
     text: { textAlign: 'center', fontWeight: 'bold', fontSize: 25 }
-})
+});

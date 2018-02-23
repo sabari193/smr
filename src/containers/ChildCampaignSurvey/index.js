@@ -249,6 +249,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
 
         //Fieldname to be added
         this.state = {
+            clusterID: '',
             editedField: false,
             surveyType: '',
             c2name: '',
@@ -340,7 +341,8 @@ export default class ChildCampaignSurvey extends ValidationComponent {
             cs12adqual5: '',
             cs13dproblem: '',
             cs13adprobsp: '',
-            cs15intcomments: ''
+            cs15intcomments: '',
+            updatedTime: ''
         };
 
         this.styles = StyleSheet.create({
@@ -377,16 +379,32 @@ export default class ChildCampaignSurvey extends ValidationComponent {
         dispatch({ type: 'goToDashboard' });
     }
     componentWillMount() {
+        const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         this.props.navigation.setParams({ handleSubmit: this.onPress.bind(this), goHome: this._goHome.bind(this) });
         const { params } = this.props.navigation.state;
+        console.log(params);
         const surveyType = realm.objects('Cluster').filtered('status = "active"')[0].surveyType;
-        const childSurveyData = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID);
+        const childSurveyData = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1', params.person.Sno, params.HouseholdID);
         if (childSurveyData.length > 0) {
             const surveyDataFromDB = JSON.parse(JSON.parse(JSON.stringify(childSurveyData))[0].surveyData);
             this.setState(surveyDataFromDB);
             this.setState({ editedField: true });
         }
-        this.setState({ surveyType });
+        this.setState({ surveyType, clusterID });
+    }
+
+    componentDidMount() {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                this.setState({
+                    accuracy: position.coords.accuracy,
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude
+                });
+            },
+            (error) => console.log('location is not available'),
+            { enableHighAccuracy: false, timeout: 30000 }
+        );
     }
 
     onChange(value) {
@@ -399,24 +417,22 @@ export default class ChildCampaignSurvey extends ValidationComponent {
         if (this.isFormValid()) {
             this.setState({
                 h1hhid: params.HouseholdID,
-                h4avisit1: moment().format('MM-DD-YYY h:mm:ss a'),
-                h27latitude: '2.2',
-                h28longitude: '3.3'
+                updatedTime: moment().format('MM-DD-YYY h:mm:ss a')
             });
             let surveyID;
             if (this.state.editedField) {
-                surveyID = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
+                surveyID = realm.objects('SurveyInformation').filtered('status = "saved" && Sno = $0 && AgeGroup = $1 && HouseholdID=$2', params.person.Sno, params.person.AgeGroup, params.HouseholdID)[0].surveyID;
                 realm.write(() => {
                     realm.create('SurveyInformation', { surveyID, surveyData: JSON.stringify(this.state), status: 'saved' }, true);
                 });
-                this.removeBloodSampleCount();
+                this.removeBloodSampleCount(params.person.AgeGroup);
                 navigate('CompletedSurveyDetails');
             } else {
-                surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && HouseholdID=$1', params.Sno, params.HouseholdID)[0].surveyID;
+                surveyID = realm.objects('SurveyInformation').filtered('status = "open" && Sno = $0 && AgeGroup = $1 && HouseholdID=$2', params.person.Sno, params.person.AgeGroup, params.HouseholdID)[0].surveyID;
                 realm.write(() => {
                     realm.create('SurveyInformation', { surveyID, surveyData: JSON.stringify(this.state), status: 'inprogress' }, true);
                 });
-                this.addBloodSampleCount();
+                this.addBloodSampleCount(params.person.AgeGroup);
                 navigate('RandomListScreen');
             }
         } else {
@@ -430,30 +446,52 @@ export default class ChildCampaignSurvey extends ValidationComponent {
             );
         }
     }
-    addBloodSampleCount() {
+    addBloodSampleCount(AgeGroup) {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         realm.write(() => {
-            if (realm.objects('BloodSample').length > 0) {
+            if (AgeGroup === 'A') {
+                if (realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID).length > 0) {
+                    const bloodsampleid = realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID)[0].id;
+                    const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeA;
+                    if (this.state.cs1scollect === '01' || this.state.cs7dcollect === '01') {
+                        realm.create('BloodSample', { id: bloodsampleid, TypeA: bloodSampleData + 1 }, true);
+                    }
+                } else {
+                    realm.create('BloodSample', { id: new Date().getTime(), clusterID, TypeA: 1 });
+                }
+            } else if (realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID).length > 0) {
                 const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeB;
-                console.log('bloodSampleData', bloodSampleData);
+                const bloodsampleid = realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID)[0].id;
                 if (this.state.cs1scollect === '01' || this.state.cs7dcollect === '01') {
-                    realm.create('BloodSample', { clusterID, TypeB: bloodSampleData + 1 }, true);
+                    realm.create('BloodSample', { id: bloodsampleid, TypeB: bloodSampleData + 1 }, true);
                 }
             } else {
-                realm.create('BloodSample', { clusterID, TypeB: 1 });
+                realm.create('BloodSample', { id: new Date().getTime(), clusterID, TypeB: 1 });
             }
         });
     }
-    removeBloodSampleCount() {
+    removeBloodSampleCount(AgeGroup) {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
-        const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeB;
-        realm.write(() => {
-            if (this.state.cs1scollect !== '01' && this.state.cs7dcollect !== '01') {
-                if (bloodSampleData.TypeB > 0) {
-                    realm.create('BloodSample', { clusterID, TypeB: bloodSampleData - 1 }, true);
+        const bloodsampleid = realm.objects('BloodSample').filtered('Submitted = "active" && clusterID = $0', clusterID)[0].id;
+        if (AgeGroup === 'A') {
+            const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeA;
+            realm.write(() => {
+                if (this.state.cs1scollect !== '01' && this.state.cs7dcollect !== '01') {
+                    if (bloodSampleData.TypeA > 0) {
+                        realm.create('BloodSample', { id: bloodsampleid, TypeA: bloodSampleData - 1 }, true);
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            const bloodSampleData = realm.objects('BloodSample').filtered('clusterID=$0', clusterID)[0].TypeB;
+            realm.write(() => {
+                if (this.state.cs1scollect !== '01' && this.state.cs7dcollect !== '01') {
+                    if (bloodSampleData.TypeB > 0) {
+                        realm.create('BloodSample', { id: bloodsampleid, TypeB: bloodSampleData - 1 }, true);
+                    }
+                }
+            });
+        }
     }
     render() {
         const { params } = this.props.navigation.state;
@@ -1252,7 +1290,14 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.optionList}
                                 initial={this.state.cs1scollectindex ? this.state.cs1scollectindex : 0}
-                                onPress={(value, index) => { this.setState({ cs1scollect: value, cs1scollectindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ cs1scollect: value, cs1scollectindex: index });
+                                    if (value === '01') {
+                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                    } else {
+                                        this.state.specimenCapillaryID = '';
+                                    }
+                                }}
                             />
                         </View>
 
@@ -1283,6 +1328,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                         }
 
                         <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.headingLetter}>{`Specimen Capillary ID: ${this.state.specimenCapillaryID}`}</Text>
                             <Text style={styles.headingLetter}>How specimen was collected?</Text>
                             <RadioForm
                                 animation={false}
@@ -1347,7 +1393,15 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.dbssampleoptions}
                                 initial={this.state.cs7dcollectindex ? this.state.cs7dcollectindex : 0}
-                                onPress={(value, index) => { this.setState({ cs7dcollect: value, cs7dcollectindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ cs7dcollect: value, cs7dcollectindex: index });
+                                    if (value === '01') {
+                                        console.log('params', params);
+                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                    } else {
+                                        this.state.specimenDBSID = '';
+                                    }
+                                }}
                             />
                         </View>
 
@@ -1375,6 +1429,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                             </View>
                         }
                         <View style={{ marginBottom: 20 }}>
+                            <Text style={styles.headingLetter}>{`Specimen Cap9llary ID: ${this.state.specimenDBSID}`}</Text>
                             <Text style={styles.headingLetter}>Number of spots collected?</Text>
                             <RadioForm
                                 animation={false}

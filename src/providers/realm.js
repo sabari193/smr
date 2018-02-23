@@ -117,8 +117,9 @@ SurveyInformation.schema = {
 class BloodSampleSchema extends Realm.Object { }
 BloodSampleSchema.schema = {
     name: 'BloodSample',
-    primaryKey: 'clusterID',
+    primaryKey: 'id',
     properties: {
+        id: { type: 'int' },
         clusterID: { type: 'string' },
         Submitted: { type: 'string', default: 'active' },
         TypeA: { type: 'int', default: 0 },

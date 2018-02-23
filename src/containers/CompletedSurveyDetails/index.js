@@ -50,6 +50,7 @@ export default class CompletedSurveyDetails extends React.Component {
         /* NetInfo.isConnected.fetch().then(isConnected => {
             alert('isConnected', isConnected);
         }); */
+        const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
         if (this.state.surveyDetails.length > 0) {
             Alert.alert(
                 'Submit Survey Information',
@@ -75,6 +76,8 @@ export default class CompletedSurveyDetails extends React.Component {
                                         _.forEach(completedSurvey, (survey) => {
                                             realm.create('SurveyInformation', { surveyID: survey.surveyID, status: 'completed' }, true);
                                         });
+                                        const bloodsampleid = realm.objects('BloodSample').filtered('Submitted="active" && clusterID=$0', clusterID)[0].id;
+                                        realm.create('BloodSample', { id: bloodsampleid, Submitted: 'completed' }, true);
                                         this.setState({
                                             loading: false
                                         });
