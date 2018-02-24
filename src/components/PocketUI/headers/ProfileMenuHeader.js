@@ -28,10 +28,14 @@ const ProfileMenuHeader = props => {
 
   const { navigate } = props.navigation;
   return (
-    <View>
+    <View style={{ backgroundColor: '#fff', marginTop: 50 }}>
       <View style={styles.hero}>
-        <View style={styles.headingIcon}><Text style={styles.headingLetter} >{headingIcon}</Text></View>
-        <Text style={styles.heading}>{heading}</Text>
+          <Image
+              style={{ height: 200, width: 200, marginLeft: 20 }}
+              source={require('../../../images/logo.png')}
+            />
+            <Text style={styles.titleText}>Impact of measles rubella (MR) vaccination campaign on population immunity in India (IMRVI study)</Text>
+          <Text style={styles.heading}>{heading}</Text>
       </View>
 
       <View style={styles.menuSection}>
@@ -43,7 +47,7 @@ const ProfileMenuHeader = props => {
               size={50}
             /> */}
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/addHousehold.png')}
             />
             <Text style={styles.iconTitle}>{icon1Title}</Text>
@@ -53,7 +57,7 @@ const ProfileMenuHeader = props => {
         <TouchableHighlight style={styles.heroScan} underlayColor={'transparent'} onPress={onPressIcon2} >
           <View>
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/editHousehold.png')}
             />
             <Text style={styles.iconTitle}>{icon2Title}</Text>
@@ -64,7 +68,7 @@ const ProfileMenuHeader = props => {
         <TouchableHighlight style={styles.heroScan} underlayColor={'transparent'} onPress={onPressIcon3}>
           <View>
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/survey.png')}
             />
             <Text style={styles.iconTitle}>{icon3Title}</Text>
@@ -73,7 +77,7 @@ const ProfileMenuHeader = props => {
         <TouchableHighlight style={styles.heroScan} underlayColor={'transparent'} onPress={onPressIcon4}>
           <View >
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/completedsurvey.png')}
             />
             <Text style={styles.iconTitle}>{icon4Title}</Text>
@@ -84,7 +88,7 @@ const ProfileMenuHeader = props => {
         <TouchableHighlight style={styles.heroScan} underlayColor={'transparent'} onPress={onPressIcon5}>
           <View>
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/analytics.png')}
             />
             <Text style={styles.iconTitle}>{icon5Title}</Text>
@@ -93,7 +97,7 @@ const ProfileMenuHeader = props => {
         <TouchableHighlight style={styles.heroScan} underlayColor={'transparent'} onPress={onPressIcon6}>
           <View>
             <Image
-              style={{ height: 100, width: 100, marginLeft: 20 }}
+              style={{ height: 100, width: 100, alignSelf: 'center' }}
               source={require('../../../images/delete.png')}
             />
             <Text style={styles.iconTitle}>{icon6Title}</Text>
@@ -139,7 +143,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     fontWeight: '500',
     fontSize: 30,
-    marginBottom: 70,
+    marginBottom: 14,
   },
   headingIcon: {
     borderRadius: 60,
@@ -147,9 +151,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     display: 'flex',
     width: 70,
-    height: 70,
-    marginTop: 16,
+    height: 200,
     backgroundColor: colors.yellow,
+  },
+  titleText: {
+    fontSize: 22,
+    fontWeight: '500',
+    color: '#000',
+    marginTop: 14,
+    marginBottom: 14,
+    textAlign: 'center'
   },
   headingLetter: {
     color: '#fff',
@@ -161,19 +172,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'column',
     padding: 25,
-    height: 270,
+    height: 400,
   },
   menuSection: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#D3DFEF',
     height: 160,
+    textAlign: 'center'
   },
   menuSection2: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderColor: '#D3DFEF',
-    height: 160,
+    height: 160,    
+    textAlign: 'center'
   },
   heroScan: {
     flex: 1,
@@ -188,6 +201,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 26,
     fontWeight: 'bold',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 });
 

@@ -183,13 +183,9 @@ Card.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 12,
     margin: 10,
-    paddingTop: 30,
-    marginBottom: 15,
-    marginTop: 13,
-    borderRadius: 10,
     flexDirection: 'row',
     ...Platform.select({
       ios: {
@@ -199,7 +195,8 @@ const styles = StyleSheet.create({
         shadowRadius: 14,
       },
       android: {
-        elevation: 8
+        borderBottomWidth: 1,
+        borderBottomColor: '#000'
       },
     }),
   },
@@ -219,12 +216,10 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 18,
   },
   cardColorBlock: {
-    height: 220,
+    height: 150,
     marginBottom: 10,
     width: 20,
     borderRadius: 4,
