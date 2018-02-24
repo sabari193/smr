@@ -15,9 +15,7 @@ export default class ViewClusterScreen extends React.Component {
             householdList: [],
             clusterInfo: '',
             loading: false
-        }
-
-
+        };
     }
 
     static navigationOptions = ({ navigation }) => {
@@ -41,7 +39,7 @@ export default class ViewClusterScreen extends React.Component {
                     onPress={params.goHome}
                 />
             )
-        }
+        };
     };
 
     state = {
@@ -53,11 +51,11 @@ export default class ViewClusterScreen extends React.Component {
     }
     componentWillMount() {
         this.setState({
-            'clusterInfo': JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')))
+            clusterInfo: JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')))
         });
         this.props.navigation.setParams({ handleSubmit: this.handleSubmit.bind(this), goHome: this._goHome.bind(this) });
-        let obj = JSON.parse(JSON.stringify(realm.objects('Household').filtered('Submitted="inprogress"')));
-        let result = _.chain(obj).groupBy("HouseholdID").map((group, HouseholdID) => ({ // map the groups to new objects
+        const obj = JSON.parse(JSON.stringify(realm.objects('Household').filtered('Submitted="inprogress"')));
+        const result = _.chain(obj).groupBy('HouseholdID').map((group, HouseholdID) => ({ // map the groups to new objects
             HouseholdID,
             HouseholdPrimary: group[0].HouseholdPrimary,
             IndividualsCount: group[0].Name ? String(group.length) : '0',
@@ -93,16 +91,17 @@ export default class ViewClusterScreen extends React.Component {
             [
                 { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
                 {
-                    text: 'OK', onPress: () => {
+                    text: 'OK',
+                    onPress: () => {
                         this.setState({
                             loading: true
                         });
-                        let postData = {
+                        const postData = {
                             ClusterId: this.state.clusterInfo[0].clusterID,
                             PlaceName: this.state.clusterInfo[0].villageName,
                             CensusForm: this.state.householdList
-                        }
-                        console.log("postData", postData);
+                        };
+                        console.log('postData', postData);
                         axios.post('http://www.allianceaircon.com/MRSurvey/CensusDetails.php', postData)
                             .then((response) => {
                                 console.log(response);
@@ -126,13 +125,11 @@ export default class ViewClusterScreen extends React.Component {
                                 if (JSON.stringify(error).status == '503' || JSON.stringify(error).status == '503') {
                                     if (realm.objects('ServerUnavailable').length == 0) {
                                         realm.write(() => {
-                                            realm.create('ServerUnavailable', { updatedTimeStamp: new Date() })
-
+                                            realm.create('ServerUnavailable', { updatedTimeStamp: new Date() });
                                         });
-                                    }
-                                    else {
-                                        let lastUpdatedTime = JSON.parse(JSON.stringify(realm.objects('ServerUnavailable')))[0].updatedTimeStamp;
-                                        let timeDifference = Math.floor((new Date().getTime() - lastUpdatedTime) / (1000 * 60));
+                                    } else {
+                                        const lastUpdatedTime = JSON.parse(JSON.stringify(realm.objects('ServerUnavailable')))[0].updatedTimeStamp;
+                                        const timeDifference = Math.floor((new Date().getTime() - lastUpdatedTime) / (1000 * 60));
                                         if (timeDifference > 15) {
 
                                         }
@@ -143,13 +140,12 @@ export default class ViewClusterScreen extends React.Component {
                                 });
                                 dispatch({ type: 'goToDashboard' });
                             });
-                        console.log("submit clutser information", postData);
+                        console.log('submit clutser information', postData);
                     }
                 },
             ],
             { cancelable: false }
-        )
-
+        );
     }
     render() {
         const { navigate } = this.props.navigation;
@@ -170,17 +166,16 @@ export default class ViewClusterScreen extends React.Component {
                         <Text style={styles.headingLetterMain}>HouseHold Information</Text>
                         <View>
                             {this.state.householdList.map(function (house, index) {
-                                return <Card
+                                return (<Card
                                     key={house.HouseholdID}
-                                    onPress={() => { house.IndividualsCount > 0 ? navigate('ViewHousehold', { headName: house.headName, members: house.IndividualInfo, HouseholdID: house.HouseholdID, clusterInfo: this.state.clusterInfo }) : alert('Members not available') }}
+                                    onPress={() => { house.IndividualsCount > 0 ? navigate('ViewHousehold', { headName: house.headName, members: house.IndividualInfo, HouseholdID: house.HouseholdID, clusterInfo: this.state.clusterInfo }) : alert('Members not available'); }}
                                     title={`Head Name : ${house.headName}`}
                                     subTitle={`Household ID : ${house.HouseholdID}`}
                                     number={`Count : ${house.IndividualsCount}`}
                                     expiration={`Last Updated : ${house.UpdatedTime}`}
                                     subTitle2={`Household Status : ${house.HouseholdStatusValue}`}
                                     moreText='View'
-                                >
-                                </Card>
+                                />);
                             }, this)}
                         </View>
                     </ScrollView>

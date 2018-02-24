@@ -41,6 +41,7 @@ HouseholdSchema.schema = {
         id: 'string',
         HouseholdID: 'string',
         HouseholdStatus: 'string',
+        HouseholdPrimary: 'int?',
         Name: 'string',
         KnowDOB: 'bool',
         DOB: 'string',

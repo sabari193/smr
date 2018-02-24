@@ -28,9 +28,7 @@ export default class HouseHoldScreen extends React.Component {
       accuracy: 0,
       latitude: 0,
       longitude: 0
-    }
-
-
+    };
   }
   static navigationOptions = ({ navigation, navigate }) => {
     const { params = {} } = navigation.state;
@@ -53,7 +51,7 @@ export default class HouseHoldScreen extends React.Component {
           onPress={params.goHome}
         />
       )
-    }
+    };
   };
 
   state = {
@@ -64,25 +62,39 @@ export default class HouseHoldScreen extends React.Component {
     const { params = {} } = this.props.navigation.state;
     const clusterInfo = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
     this.props.navigation.setParams({ handleSave: this._handleSave.bind(this), goHome: this._goHome.bind(this) });
-    let HouseholdNumber = ''
+    let HouseholdNumber = '';
     if (!params.HouseholdID) {
-      let activehouseholdData = realm.objects('HouseholdNumber').filtered('Submitted="active" AND clusterID=$0', clusterInfo[0].clusterID);
+      const activehouseholdData = realm.objects('HouseholdNumber').filtered('Submitted="active" AND clusterID=$0', clusterInfo[0].clusterID);
       if (activehouseholdData.length === 1) {
         HouseholdNumber = activehouseholdData[0].HouseholdID;
-      }
-      else {
-        let completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
+      } else {
+        const completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
         if (completedhouseholdData.length > 0) {
-          let householdNo = parseInt(completedhouseholdData[completedhouseholdData.length - 1].HouseholdID) + 1
+          const householdNo = parseInt(completedhouseholdData[completedhouseholdData.length - 1].HouseholdID) + 1;
           HouseholdNumber = String(householdNo);
-        }
-        else {
+        } else {
           HouseholdNumber = '1';
         }
       }
-    }
-    else {
+    } else {
       HouseholdNumber = params.HouseholdID;
+    }
+    if (params.HouseholdStatus) {
+      if (params.HouseholdStatus === '1') {
+        this.setState({
+          HouseholdStatus1: true,
+          HouseholdStatus: '1',
+          HouseholdStatusValue: 'Complete',
+          HouseholdStatus2: false
+        });
+      } else if (params.HouseholdStatus === '2') {
+        this.setState({
+          HouseholdStatus1: false,
+          HouseholdStatus: '2',
+          HouseholdStatusValue: 'Complete, Information provided by neighbor',
+          HouseholdStatus2: true
+        });
+      }
     }
     this.setState({
       HouseholdID: HouseholdNumber,
@@ -94,7 +106,7 @@ export default class HouseHoldScreen extends React.Component {
   componentDidMount() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        console.log("position.coords.accuracy", position.coords.accuracy);
+        console.log('position.coords.accuracy', position.coords.accuracy);
         this.setState({
           accuracy: position.coords.accuracy,
           latitude: position.coords.latitude,
@@ -103,7 +115,7 @@ export default class HouseHoldScreen extends React.Component {
       },
       (error) => console.log('location is not available'),
       { enableHighAccuracy: false, timeout: 30000 }
-    )
+    );
   }
   _goHome() {
     const { navigate } = this.props.navigation;
@@ -116,7 +128,7 @@ export default class HouseHoldScreen extends React.Component {
         const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
         const householdObj = {
           id: `${this.state.HouseholdID}${new Date().getTime()}`,
-          householdNumberPrimary: HouseholdPrimary,
+          HouseholdPrimary,
           HouseholdID: this.state.HouseholdID,
           HouseholdStatus: this.state.HouseholdStatus,
           Name: '',
@@ -133,20 +145,17 @@ export default class HouseHoldScreen extends React.Component {
           latitude: this.state.latitude,
           longitude: this.state.longitude,
           accuracy: this.state.accuracy
-        }
+        };
         realm.write(() => {
           realm.delete(realm.objects('Household').filtered('HouseholdID=$0', this.state.HouseholdID));
           realm.create('Household', householdObj);
-          realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
-
+          realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
         });
         navigate('Dashboard');
-      }
-      else {
+      } else {
         this.savehouseholdInformation();
       }
-    }
-    else {
+    } else {
       this.savehouseholdInformation();
     }
   }
@@ -154,14 +163,14 @@ export default class HouseHoldScreen extends React.Component {
   savehouseholdInformation() {
     const { navigate } = this.props.navigation;
     const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
-    let idList = _.map(JSON.parse(JSON.stringify(this.state.personList)), 'id');
+    const idList = _.map(JSON.parse(JSON.stringify(this.state.personList)), 'id');
     realm.write(() => {
-      for (var i = 0; i < idList.length; i++) {
-        realm.create('Household', { id: idList[i], Submitted: 'inprogress' }, true);
+      for (let i = 0; i < idList.length; i++) {
+        realm.create('Household', { id: idList[i], Submitted: 'inprogress', HouseholdPrimary }, true);
       }
       const householdDetails = realm.objects('Household').filtered('Submitted="inprogress" AND HouseholdStatus!="1" AND HouseholdStatus!= "2" AND HouseholdID=$0', this.state.HouseholdID);
       realm.delete(householdDetails);
-      realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary: HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
+      realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
     });
     this.setState({
       personList: []
@@ -174,7 +183,7 @@ export default class HouseHoldScreen extends React.Component {
       realm.delete(removePerson);
       this.setState({
         personList: realm.objects('Household').filtered('HouseholdID=$0 AND Submitted= "active"', this.state.HouseholdID)
-      })
+      });
     });
   }
 
@@ -186,14 +195,15 @@ export default class HouseHoldScreen extends React.Component {
           <Text style={styles.headingLetterMain}>Household Information</Text>
           <Text style={styles.headingLetter}>{`Cluster ID : ${this.state.clusterID} / Village Name : ${this.state.villageName}  `}</Text>
           <View style={{ flex: 2, flexDirection: 'row', alignSelf: 'flex-end' }}>
-            <Text style={styles.headingLetter1}>{`Household Number`}</Text>
+            <Text style={styles.headingLetter1}>{'Household Number'}</Text>
             <FormInput
               inputStyle={{ width: 50 }}
               maxLength={3}
               placeholder='HouseHold Number'
               value={this.state.HouseholdID}
-              onChangeText={(HouseholdID) => this.setState({ HouseholdID: HouseholdID })}
-              keyboardType='numeric' />
+              onChangeText={(HouseholdID) => this.setState({ HouseholdID })}
+              keyboardType='numeric'
+            />
           </View>
           <Text style={styles.headingLetter1}>Household Status</Text>
           <RadioButton
@@ -348,14 +358,14 @@ export default class HouseHoldScreen extends React.Component {
           }
           <Divider />
           {(this.state.HouseholdStatus1 || this.state.HouseholdStatus2) && this.state.personList.map(function (person, index) {
-            return <WalletHeader
+            return (<WalletHeader
               key={index}
               headingIcon={person.Sex}
               heading={`Name : ${person.Name}`}
-              heading1={`${person.KnowDOB ? `DOB  : ` : `Age : `} ${person.KnowDOB ? person.DOB : person.Age}`}
+              heading1={`${person.KnowDOB ? 'DOB  : ' : 'Age : '} ${person.KnowDOB ? person.DOB : person.Age}`}
               rightIcon='trash'
               rightIconClick={() => this.removePerson(person, index)}
-            />;
+            />);
           }, this)}
         </ScrollView>
       </View >

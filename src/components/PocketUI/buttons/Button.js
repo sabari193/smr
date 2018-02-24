@@ -13,13 +13,11 @@ import Text from '../text/Text';
 import normalize from '../helpers/normalizeText';
 import ViewPropTypes from '../config/ViewPropTypes';
 
-const log = () =>
-{
+const log = () => {
   console.log('please attach method to this component'); //eslint-disable-line no-console
 };
 
-const Button = props =>
-{
+const Button = props => {
   const {
     disabled,
     title,
@@ -47,23 +45,19 @@ const Button = props =>
     textEllipsizeMode,
     ...attributes
   } = props;
-  let {Component} = props;
+  let { Component } = props;
 
-  if (!Component && Platform.OS === 'ios')
-  {
+  if (!Component && Platform.OS === 'ios') {
     Component = TouchableHighlight;
   }
-  if (!Component && Platform.OS === 'android')
-  {
+  if (!Component && Platform.OS === 'android') {
     Component = TouchableNativeFeedback;
   }
-  if (!Component)
-  {
+  if (!Component) {
     Component = TouchableHighlight;
   }
 
-  if (Platform.OS === 'android' && (borderRadius && !attributes.background))
-  {
+  if (Platform.OS === 'android' && (borderRadius && !attributes.background)) {
     attributes.background = TouchableNativeFeedback.Ripple(
       'ThemeAttrAndroid',
       true
@@ -83,20 +77,20 @@ const Button = props =>
         <View
           style={[
             styles.button,
-            secondary && {backgroundColor: colors.secondary},
-            secondary2 && {backgroundColor: colors.secondary2},
-            secondary3 && {backgroundColor: colors.secondary3, borderColor: colors.blue, borderWidth: 2},
+            secondary && { backgroundColor: colors.secondary },
+            secondary2 && { backgroundColor: colors.secondary2 },
+            secondary3 && { backgroundColor: colors.secondary3, borderColor: colors.blue, borderWidth: 2 },
             buttonStyle && buttonStyle,
           ]}
         >
           <Text
             style={[
               styles.text,
-              color && {color},
-              fontSize && {fontSize},
+              color && { color },
+              fontSize && { fontSize },
               textStyle && textStyle,
-              secondary && {color: colors.grey0},
-              secondary3 && {color: colors.blue},
+              secondary && { color: colors.grey0 },
+              secondary3 && { color: colors.blue },
             ]}
           >
             {title}
@@ -156,7 +150,6 @@ const stylesObject = {
     backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    flexDirection: 'row',
   },
   text: {
     color: 'white',

@@ -91,10 +91,10 @@ export default class ViewSurveyDetails extends React.Component {
                     }
                     {(this.state.householdSurveyStatus) &&
                         <View>
-                            <Button
-                                disabled
-                                buttonStyle={{ marginTop: 75, marginBottom: 30, backgroundColor: 'grey' }}
-                                title={`Household survey for ${params.HouseholdID} completed`}
+                            <WalletHeader
+                                headingIcon={'H'}
+                                heading={`Household survey completed for ${params.HouseholdID}`}
+                                rightIcon={'check-square-o'}
                             />
                             {this.state.personList.map((person, index) => (<View key={index}>
                                 {(person.AgeGroup != 'H') &&
