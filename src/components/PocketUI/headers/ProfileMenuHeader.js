@@ -28,10 +28,10 @@ const ProfileMenuHeader = props => {
 
   const { navigate } = props.navigation;
   return (
-    <View style={{ backgroundColor: '#fff', marginTop: 50 }}>
+    <View style={{ backgroundColor: '#fff' }}>
       <View style={styles.hero}>
           <Image
-              style={{ height: 150, width: 150, marginLeft: 20 }}
+              style={{ height: 150, width: 150, marginLeft: 10 }}
               source={require('../../../images/logo.png')}
           />
             <Text style={styles.titleText}>Impact of measles rubella (MR) vaccination campaign on population immunity in India (IMRVI study)</Text>
