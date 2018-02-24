@@ -70,8 +70,8 @@ export default class HouseHoldScreen extends React.Component {
       } else {
         const completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
         if (completedhouseholdData.length > 0) {
-          const householdNo = parseInt(completedhouseholdData[completedhouseholdData.length - 1].HouseholdID) + 1;
-          HouseholdNumber = String(householdNo);
+          const values = _.values(JSON.parse(JSON.stringify(completedhouseholdData)));
+          HouseholdNumber = String(parseInt(_.maxBy(values, 'HouseholdID').HouseholdID) + 1);
         } else {
           HouseholdNumber = '1';
         }
