@@ -207,7 +207,6 @@ export default class HouseHoldSurvey extends ValidationComponent {
         this.styles = StyleSheet.create({
             container: {
                 flex: 1,
-                marginTop: 50,
                 padding: 20,
                 backgroundColor: '#ffffff',
             },
@@ -306,10 +305,9 @@ export default class HouseHoldSurvey extends ValidationComponent {
         console.log('this.state', this.state);
         return (
             <ScrollView style={this.styles.container}>
-                {/* <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetterErr}>{this.getErrorMessages()}</Text>
-                </View> */}
-
+                <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                    <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Characteristics (HC) Form</Text>
+                </View>
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>1. Household ID*</Text>
                     <FormInput
@@ -318,7 +316,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                         value={params.HouseholdID}
                     />
                 </View>
-                <View style={{ marginBottom: 20 }}>
+                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                     <Text style={styles.headingLetter}>3. Status of interview Result Code</Text>
                     <RadioForm
                         animation={false}
@@ -350,7 +348,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onChangeText={(name) => this.setState({ h8respondentname: name })}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>5. Respondent relationship to head of household</Text>
                             <RadioForm
                                 animation={false}
@@ -364,7 +362,10 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h9relationship: value, h9relationshipindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                            <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Information</Text>
+                        </View>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>8. What is the religion of the household?*</Text>
                             <RadioForm
                                 animation={false}
@@ -378,7 +379,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h17hhreligion: value, h17hhreligionindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>9. Does someone in the household have BPL card?</Text>
                             <RadioForm
                                 animation={false}
@@ -392,7 +393,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h18hhbpl: value, h18hhbplindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>10. Head of household education</Text>
                             <RadioForm
                                 animation={false}
@@ -406,7 +407,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h19hheducation: value, h19hheducationindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>11. Head of household Occupation</Text>
                             <RadioForm
                                 animation={false}
@@ -420,7 +421,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h20hhoccupation: value, h20hhoccupationindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>12. What is your caste?</Text>
                             <RadioForm
                                 animation={false}
@@ -434,7 +435,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h21hhcaste: value, h21hhcasteindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>7. Is household ?</Text>
                             <RadioForm
                                 animation={false}
@@ -456,8 +457,11 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onChangeText={(name) => this.setState({ h16hhstatusothsp: name })}
                             />
                         </View>
-						}
-                        <View style={{ marginBottom: 20 }}>
+                        }
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                            <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Material and Assets</Text>
+                        </View>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>22. Housing materials</Text>
                             <RadioForm
                                 animation={false}
@@ -481,7 +485,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                             </View>
                         }
 						
-						 <View style={{ marginBottom: 20 }}>
+						 <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>22A. Type of toilet household members use?</Text>
                             <RadioForm
                                 animation={false}
@@ -495,7 +499,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h22atoilettype: value, h22atoilettypeindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>23a. Four wheeler vehicle</Text>
                             <RadioForm
                                 animation={false}
@@ -510,7 +514,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                             />
                         </View>
 
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>23d. Land</Text>
                             <RadioForm
                                 animation={false}
@@ -524,7 +528,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h23dland: value, h23dlandindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>24. Does the mother own a mobile phone?</Text>
                             <RadioForm
                                 animation={false}
@@ -538,9 +542,10 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h23emobile: value, h23emobileindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        
-                       
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                            <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Nearby health facility &amp; health seeking behaviors</Text>
+                        </View>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>17. What type of health facility would you usually take your child to for vaccinations? </Text>
                             <RadioForm
                                 animation={false}
@@ -554,7 +559,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h26vaxfacilitytyp: value, h26vaxfacilitytypindex: index }); console.log(this.state); }}
                             />
                         </View>
-						<View style={{ marginBottom: 20 }}>
+						<View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>32A. Number of visits made to complete the enrollment? </Text>
                             <RadioForm
                                 animation={false}

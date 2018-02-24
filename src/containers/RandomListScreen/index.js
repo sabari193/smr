@@ -88,11 +88,10 @@ export default class RandomListScreen extends React.Component {
         return (
             <ScrollView style={{ backgroundColor: '#e9e9e9'}}>
                 {(this.state.loading) &&
-                    <View style={{ marginTop: 250, marginLeft: 160 }}>
-                        {/* <Image
-                            source={require('../../images/loader.gif')}
-                        /> */}
-                        <Text style={{ fontSize: 40, marginTop: 100 }}>Loading....</Text>
+                    <View style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+                        <Image
+                            source={require('../../images/loading2.gif')}
+                        />
                     </View>
                 }
                 {(!this.state.loading && this.state.surveyDetails) &&
