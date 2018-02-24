@@ -48,8 +48,12 @@ export default class HouseHoldSurvey extends ValidationComponent {
             { value: '01', label: 'Yes' },
             { value: '02', label: 'No' },
             { value: '88', label: 'Dont Know' }];
-			
-		this.optionListMother = [
+
+        this.optionListOneTwo = [
+            { value: '01', label: 'One' },
+            { value: '02', label: 'Two' }];
+
+        this.optionListMother = [
             { value: '01', label: 'Yes' },
             { value: '02', label: 'No' },
             { value: '03', label: 'Mother not alive' }];
@@ -66,7 +70,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
             { value: '05', label: 'In-Law' },
             { value: '06', label: 'parent or guardian' },
             { value: '07', label: 'Other relative' },
-			{ value: '08', label: 'Other' }
+            { value: '08', label: 'Other' }
         ];
 
         this.migratoryCategory = [
@@ -81,8 +85,8 @@ export default class HouseHoldSurvey extends ValidationComponent {
             { value: '02', label: 'Rented' },
             { value: '03', label: 'Provided free of charge by relative/employer' },
             { value: '88', label: 'Dont know' },
-			{ value: '99', label: 'Other, Specify*' }
-			];
+            { value: '99', label: 'Other, Specify*' }
+        ];
 
 
         this.religion = [
@@ -198,6 +202,9 @@ export default class HouseHoldSurvey extends ValidationComponent {
             h25facilityindex: 0,
             h26vaxfacilitytyp: '01',
             h26vaxfacilitytypindex: 0,
+            h32avisits: '',
+            h32avisitsindex: 0,
+            h32bdateofvisit: '',
             h31intcomments: '',
             h27latitude: '',
             h28longitude: '',
@@ -305,7 +312,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
         console.log('this.state', this.state);
         return (
             <ScrollView style={this.styles.container}>
-                <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Characteristics (HC) Form</Text>
                 </View>
                 <View style={{ marginBottom: 20 }}>
@@ -317,7 +324,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                     />
                 </View>
                 <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
-                    <Text style={styles.headingLetter}>3. Status of interview Result Code</Text>
+                    <Text style={styles.headingLetter}>3. Status of interview</Text>
                     <RadioForm
                         animation={false}
                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -362,7 +369,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h9relationship: value, h9relationshipindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center' }}>
                             <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Information</Text>
                         </View>
                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
@@ -449,16 +456,16 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h16hhstatus: value, h16hhstatusindex: index }); console.log(this.state); }}
                             />
                         </View>
-						{(this.state.h16hhstatus === '99') &&
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>7a. Other house status?*</Text>
-                            <FormInput
-                                value={this.state.h16hhstatusothsp}
-                                onChangeText={(name) => this.setState({ h16hhstatusothsp: name })}
-                            />
-                        </View>
+                        {(this.state.h16hhstatus === '99') &&
+                            <View style={{ marginBottom: 20 }}>
+                                <Text style={styles.headingLetter}>7a. Other house status?*</Text>
+                                <FormInput
+                                    value={this.state.h16hhstatusothsp}
+                                    onChangeText={(name) => this.setState({ h16hhstatusothsp: name })}
+                                />
+                            </View>
                         }
-                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center' }}>
                             <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Household Material and Assets</Text>
                         </View>
                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
@@ -499,6 +506,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h22atoilettype: value, h22atoilettypeindex: index }); console.log(this.state); }}
                             />
                         </View>
+			<Text style={styles.headingLetter}>ASSETS</Text>
                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>23a. Four wheeler vehicle</Text>
                             <RadioForm
@@ -542,7 +550,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 onPress={(value, index) => { this.setState({ h23emobile: value, h23emobileindex: index }); console.log(this.state); }}
                             />
                         </View>
-                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center'}}>
+                        <View style={{ backgroundColor: '#4c9689', height: 50, display: 'flex', justifyContent: 'center' }}>
                             <Text style={{ fontSize: 24, color: '#fff', fontWeight: '500', textAlign: 'center' }}>Nearby health facility &amp; health seeking behaviors</Text>
                         </View>
                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
@@ -568,11 +576,20 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 buttonColor={'#4B5461'}
                                 formHorizontal={false}
                                 labelHorizontal
-                                radio_props={this.optionListBoolean}
+                                radio_props={this.optionListOneTwo}
                                 initial={this.state.h32avisits}
                                 onPress={(value, index) => { this.setState({ h32avisits: value, h32avisitsindex: index }); console.log(this.state); }}
                             />
                         </View>
+                        {(this.state.h32avisits == '02') &&
+                            <View style={{ marginBottom: 20 }}>
+                                <Text style={styles.headingLetter}>32b. Date of first visit?*</Text>
+                                <FormInput
+                                    value={this.state.h32bdateofvisit}
+                                    onChangeText={(name) => this.setState({ h32bdateofvisit: name })}
+                                />
+                            </View>
+                        }
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>18. Interviewer's comments*</Text>
                             <FormInput
@@ -585,9 +602,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
             </ScrollView >
         );
     }
-
 }
-
 const styles = StyleSheet.create({
     headingLetter: {
         color: '#3E4A59',

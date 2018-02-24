@@ -42,7 +42,18 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}0${month + 1}${day}` });
+                this.setState({ w3adobdt: `${day}-${month + 1}-${year}`, selectedDate: `${year}0${month + 1}${day}` });
+                const AgeDays = Math.floor(this.getAgeDays(this.state.w3adobdt));
+                const AgeMonths = Math.floor(parseInt(AgeDays) / 30.4368);
+                if (AgeMonths > 179 && AgeMonths < 600) {
+                    this.setState({
+                        eligible: true
+                    });
+                } else {
+                    this.setState({
+                        eligible: false
+                    });
+                }
             }
         } catch ({ code, message }) {
             console.log('Cannot open date picker', message);
@@ -108,6 +119,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         this.specimenproblemoptions = [
             { value: '01', label: 'No problem' },
             { value: '02', label: 'Could not be completed because participant was crying, moving too much, other reasons' },
+            { value: '03', label: 'Participant or Guardian asked to stop' },
             { value: '99', label: 'Others, specify' }
         ];
 
@@ -145,10 +157,12 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         this.state = {
             clusterID: '',
             editedField: false,
+            eligible: true,
+            selectedDate: '',
             surveyType: '',
             w2name: '',
             w2aconsent: '01',
-            w3dob: '',
+            w3dob: '01',
             w3adobdt: '',
             w4age: '',
             w5maritalstat: '01',
@@ -157,7 +171,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
             w8mrcampaigndose: '',
             w9mrvaxhistory: '01',
             w11intcomments: '',
-            ws1scollect: '01',
+            ws1scollect: '02',
+            ws1scollectindex: 1,
             ws1ascollectno: '',
             ws1bscollectoth: '',
             ws1scollecthow: '',
@@ -165,7 +180,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
             ws5squal: '',
             ws6sproblem: '',
             ws6asprobsp: '',
-            ws7dcollect: '',
+            ws7dcollect: '02',
+            ws7dcollectindex: 1,
             ws7adcollectno: '',
             ws7bdcollectoth: '',
             ws11dspots: '',
@@ -207,6 +223,13 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 justifyContent: 'center'
             }
         });
+    }
+    getAgeDays() {
+        const now = moment();
+        const end = moment(this.state.selectedDate);
+        const duration = moment.duration(now.diff(end));
+        const days = duration.asDays();
+        return days;
     }
     _goHome() {
         const { dispatch } = this.props.navigation;
@@ -350,7 +373,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.optionListBoolean}
                                 initial={this.w3dobindex ? this.w3dobindex : 0}
-                                onPress={(value, index) => { this.setState({ w3dob: value, w3dobindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ w3dob: value, w3adobdt: '', w4age: '', w3dobindex: index, eligible: true });
+                                }}
                             />
                         </View>
                         {this.state.w3dob === '01' &&
@@ -358,7 +383,6 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 <Text style={styles.headingLetter}>3A. Date of Birth*</Text>
                                 <FormInput
                                     value={this.state.w3adobdt}
-                                    onChangeText={(w2name) => this.setState({ w2name })}
                                     onFocus={() => {
                                         this.openDatePicker();
                                     }
@@ -373,39 +397,25 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                     keyboardType='numeric'
                                     value={this.state.w4age}
                                     onChangeText={(w4age) => this.setState({ w4age })}
+                                    onBlur={() => {
+                                        const AgeMonths = Math.floor(Math.floor(this.state.age * 365.25) / 30.4368);
+                                        if (AgeMonths > 179 && AgeMonths < 600) {
+                                            this.setState({
+                                                eligible: true
+                                            });
+                                        } else {
+                                            this.setState({
+                                                eligible: false
+                                            });
+                                        }
+                                    }}
                                 />
                             </View>
                         }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>5. What is your current marital status?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal
-                                radio_props={this.maritalStatus}
-                                initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : 0}
-                                onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
-                            />
-
-                        </View>
-                        {this.state.w5maritalstat !== '02' &&
-                            <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>6. How many living children do you have at this moment?</Text>
-                                <FormInput
-                                    keyboardType='numeric'
-                                    maxLength={1}
-                                    value={this.state.w6children}
-                                    onChangeText={(w6children) => this.setState({ w6children })}
-                                />
-                            </View>
-                        }
-                        {this.state.surveyType === '02' &&
+                        {(this.state.eligible) &&
                             <View>
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>7. Were you living in this household when the MR campaign was occuring?</Text>
+                                    <Text style={styles.headingLetter}>5. What is your current marital status?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -413,113 +423,59 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         buttonColor={'#4B5461'}
                                         formHorizontal={false}
                                         labelHorizontal
-                                        radio_props={this.optionListBoolean}
-                                        initial={this.state.w7livehhcampaignindex ? this.state.w7livehhcampaignindex : 0}
-                                        onPress={(value, index) => { this.setState({ w7livehhcampaign: value, w7livehhcampaignindex: index }); console.log(this.state); }}
+                                        radio_props={this.maritalStatus}
+                                        initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : 0}
+                                        onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
                                     />
+
                                 </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>8. Did you receive a MR dose during the recent vaccination campaign?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.mrdoseoptions}
-                                        initial={this.state.w8mrcampaigndoseindex}
-                                        onPress={(value, index) => { this.setState({ w8mrcampaigndose: value, w8mrcampaigndoseindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
-                            </View>
-                        }
-
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>9. Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal
-                                radio_props={this.optionList}
-                                initial={this.state.w9mrvaxhistoryindex}
-                                onPress={(value, index) => { this.setState({ w9mrvaxhistory: value, w9mrvaxhistoryindex: index }); console.log(this.state); }}
-                            />
-                        </View>
-                    </View>
-                }
-                <View style={{ marginBottom: 20 }}>
-                    <Text style={styles.headingLetter}>11. Interviewer's comment</Text>
-                    <FormInput
-                        value={this.state.w11intcomments}
-                        onChangeText={(name) => this.setState({ w11intcomments: name })}
-                    />
-                </View>
-                {this.state.w2aconsent === '01' &&
-                    <View>
-                        <View>
-                            <Text style={styles.headingLetter}>SPECIMEN COLLECTION</Text>
-                        </View>
-
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal
-                                radio_props={this.optionList}
-                                initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 0}
-                                onPress={(value, index) => {
-                                    this.setState({ ws1scollect: value, ws1scollectindex: index });
-                                    if (value === '01') {
-                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
-                                    } else {
-                                        this.state.specimenCapillaryID = '';
-                                    }
-                                }}
-                            />
-                        </View>
-
-                        {this.state.ws1scollect === '02' &&
-                            <View>
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>1A. Specify reason?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.bloodreasonoptions}
-                                        initial={this.state.ws1ascollectnoindex ? this.state.ws1ascollectnoindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws1ascollectno: value, ws1ascollectnoindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                {this.state.ws1ascollectno === '99' &&
+                                {this.state.w5maritalstat !== '02' &&
                                     <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>1B. Specify other reason</Text>
+                                        <Text style={styles.headingLetter}>6. How many living children do you have at this moment?</Text>
                                         <FormInput
-                                            value={this.state.ws1bscollectoth}
-                                            onChangeText={(ws1bscollectoth) => this.setState({ ws1bscollectoth })}
+                                            keyboardType='numeric'
+                                            maxLength={1}
+                                            value={this.state.w6children}
+                                            onChangeText={(w6children) => this.setState({ w6children })}
                                         />
                                     </View>
                                 }
-                            </View>
-                        }
-                        {this.state.ws1scollect === '01' &&
-                            <View>
-                                <Text style={styles.headingLetter}>{`Specimen Capillary ID: ${this.state.specimenCapillaryID}`}</Text>
+                                {this.state.surveyType === '02' &&
+                                    <View>
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>7. Were you living in this household when the MR campaign was occuring?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.optionListBoolean}
+                                                initial={this.state.w7livehhcampaignindex ? this.state.w7livehhcampaignindex : 0}
+                                                onPress={(value, index) => { this.setState({ w7livehhcampaign: value, w7livehhcampaignindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>8. Did you receive a MR dose during the recent vaccination campaign?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.mrdoseoptions}
+                                                initial={this.state.w8mrcampaigndoseindex}
+                                                onPress={(value, index) => { this.setState({ w8mrcampaigndose: value, w8mrcampaigndoseindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+                                    </View>
+                                }
+
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>1C. How specimen was collected?</Text>
+                                    <Text style={styles.headingLetter}>9. Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -527,21 +483,148 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         buttonColor={'#4B5461'}
                                         formHorizontal={false}
                                         labelHorizontal
-                                        radio_props={this.specimenmethodoptions}
-                                        initial={this.state.ws1scollecthowindex ? this.state.ws1scollecthowindex : 0}
+                                        radio_props={this.optionList}
+                                        initial={this.state.w9mrvaxhistoryindex}
+                                        onPress={(value, index) => { this.setState({ w9mrvaxhistory: value, w9mrvaxhistoryindex: index }); console.log(this.state); }}
+                                    />
+                                </View>
+                            </View>
+                        }
+                        <View style={{ marginBottom: 20 }}>
+                            {(!this.state.eligible) &&
+                                <Text style={styles.headingLetterErr}>Ineligible Candidate for  the Age group selected*</Text>
+                            }
+                            <Text style={styles.headingLetter}>11. Interviewer's comment</Text>
+                            <FormInput
+                                value={this.state.w11intcomments}
+                                onChangeText={(name) => this.setState({ w11intcomments: name })}
+                            />
+                        </View>
+                        {this.state.w2aconsent === '01' && this.state.eligible &&
+                            <View>
+                                <View>
+                                    <Text style={styles.headingLetter}>SPECIMEN COLLECTION</Text>
+                                </View>
+
+                                <View style={{ marginBottom: 20 }}>
+                                    <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
+                                    <RadioForm
+                                        animation={false}
+                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                        buttonColor={'#4B5461'}
+                                        formHorizontal={false}
+                                        labelHorizontal
+                                        radio_props={this.optionList}
+                                        initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 0}
                                         onPress={(value, index) => {
-                                            this.setState({ ws1scollecthow: value, ws1scollecthowindex: index });
-                                            if (value === '01' || value === '02') {
+                                            this.setState({ ws1scollect: value, ws1scollectindex: index });
+                                            if (value === '01') {
                                                 this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
                                             } else {
-                                                this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}V`;
+                                                this.state.specimenCapillaryID = '';
                                             }
                                         }}
                                     />
                                 </View>
 
+                                {this.state.ws1scollect === '02' &&
+                                    <View>
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>1A. Specify reason?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.bloodreasonoptions}
+                                                initial={this.state.ws1ascollectnoindex ? this.state.ws1ascollectnoindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws1ascollectno: value, ws1ascollectnoindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        {this.state.ws1ascollectno === '99' &&
+                                            <View style={{ marginBottom: 20 }}>
+                                                <Text style={styles.headingLetter}>1B. Specify other reason</Text>
+                                                <FormInput
+                                                    value={this.state.ws1bscollectoth}
+                                                    onChangeText={(ws1bscollectoth) => this.setState({ ws1bscollectoth })}
+                                                />
+                                            </View>
+                                        }
+                                    </View>
+                                }
+                                {this.state.ws1scollect === '01' &&
+                                    <View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>1C. How specimen was collected?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.specimenmethodoptions}
+                                                initial={this.state.ws1scollecthowindex ? this.state.ws1scollecthowindex : 0}
+                                                onPress={(value, index) => {
+                                                    this.setState({ ws1scollecthow: value, ws1scollecthowindex: index });
+                                                    if (value === '01' || value === '02') {
+                                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                                    } else {
+                                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}V`;
+                                                    }
+                                                }}
+                                            />
+                                        </View>
+                                        <Text style={styles.headingLetterErr}>{`Specimen Capillary ID: ${this.state.specimenCapillaryID}`}</Text>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>5. Specimen quality?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.specimenqualityoptions}
+                                                initial={this.state.ws5squalindex ? this.state.ws5squalindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws5squal: value, ws5squalindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>6. Specimen collection problem?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.specimenproblemoptions}
+                                                initial={this.state.ws6sproblemindex ? this.state.ws6sproblemindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws6sproblem: value, ws6sproblemindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        {this.state.ws6sproblem === '99' &&
+                                            <View style={{ marginBottom: 20 }}>
+                                                <Text style={styles.headingLetter}>6A. Specify other reason</Text>
+                                                <FormInput
+                                                    value={this.state.ws6asprobsp}
+                                                    onChangeText={(ws6asprobsp) => this.setState({ ws6asprobsp })}
+                                                />
+                                            </View>
+                                        }
+                                    </View>
+                                }
                                 <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>5. Specimen quality?</Text>
+                                    <Text style={styles.headingLetter}>7. Was a DBS sample collected?</Text>
                                     <RadioForm
                                         animation={false}
                                         style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
@@ -549,211 +632,174 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         buttonColor={'#4B5461'}
                                         formHorizontal={false}
                                         labelHorizontal
-                                        radio_props={this.specimenqualityoptions}
-                                        initial={this.state.ws5squalindex ? this.state.ws5squalindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws5squal: value, ws5squalindex: index }); console.log(this.state); }}
+                                        radio_props={this.dbssampleoptions}
+                                        initial={this.state.ws7dcollectindex ? this.state.ws7dcollectindex : 0}
+                                        onPress={(value, index) => {
+                                            this.setState({ ws7dcollect: value, ws7dcollectindex: index });
+                                            if (value === '01') {
+                                                this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}D`;
+                                            } else {
+                                                this.state.specimenDBSID = '';
+                                            }
+                                        }}
                                     />
                                 </View>
+                                {this.state.ws7dcollect !== '01' &&
+                                    <View>
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>7A. Specify reason?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.bloodreasonoptions}
+                                                initial={this.state.ws7adcollectnoindex ? this.state.ws7adcollectnoindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws7adcollectno: value, ws7adcollectnoindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+                                        {this.state.ws7adcollectno === '99' &&
+                                            <View style={{ marginBottom: 20 }}>
+                                                <Text style={styles.headingLetter}>7B. Specify other reason</Text>
+                                                <FormInput
+                                                    value={this.state.ws7bdcollectoth}
+                                                    onChangeText={(ws7bdcollectoth) => this.setState({ ws7bdcollectoth })}
+                                                />
+                                            </View>
+                                        }
+                                    </View>
+                                }
+                                {this.state.ws7dcollect === '01' &&
+                                    <View>
+                                        <Text style={styles.headingLetterErr}>{`Specimen DBS ID: ${this.state.specimenDBSID}`}</Text>
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.spotsCollectedoptions}
+                                                initial={this.state.ws11dspotsindex ? this.state.ws11dspotsindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws11dspots: value, ws11dspotsindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
 
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>6. Specimen collection problem?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.specimenproblemoptions}
-                                        initial={this.state.ws6sproblemindex ? this.state.ws6sproblemindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws6sproblem: value, ws6sproblemindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>12A. SPECIMEN QUALITY DBS1?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.adequateoptions}
+                                                initial={this.state.ws12adqual1index ? this.state.ws12adqual1index : 0}
+                                                onPress={(value, index) => { this.setState({ ws12adqual1: value, ws12adqual1index: index }); console.log(this.state); }}
+                                            />
+                                        </View>
 
-                                {this.state.ws6sproblem === '99' &&
-                                    <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>6A. Specify other reason</Text>
-                                        <FormInput
-                                            value={this.state.ws6asprobsp}
-                                            onChangeText={(ws6asprobsp) => this.setState({ ws6asprobsp })}
-                                        />
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>12B. SPECIMEN QUALITY DBS2?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.adequateoptions}
+                                                initial={this.state.ws12adqual2index ? this.state.ws12adqual2index : 0}
+                                                onPress={(value, index) => { this.setState({ ws12adqual2: value, ws12adqual2index: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>12C. SPECIMEN QUALITY DBS3?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.adequateoptions}
+                                                initial={this.state.ws12adqual3index ? this.state.ws12adqual3index : 0}
+                                                onPress={(value, index) => { this.setState({ ws12adqual3: value, ws12adqual3index: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>12D. SPECIMEN QUALITY DBS4?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.adequateoptions}
+                                                initial={this.state.ws12adqual4index ? this.state.ws12adqual4 : 0}
+                                                onPress={(value, index) => { this.setState({ ws12adqual4: value, ws12adqual4index: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>12E. SPECIMEN QUALITY DBS5?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.adequateoptions}
+                                                initial={this.state.ws12adqual5index ? this.state.ws12adqual5index : 0}
+                                                onPress={(value, index) => { this.setState({ ws12adqual5: value, ws12adqual5index: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+
+                                        <View style={{ marginBottom: 20 }}>
+                                            <Text style={styles.headingLetter}>13. Specimen collection problem?</Text>
+                                            <RadioForm
+                                                animation={false}
+                                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                                buttonColor={'#4B5461'}
+                                                formHorizontal={false}
+                                                labelHorizontal
+                                                radio_props={this.dbsspecimenproblemoptions}
+                                                initial={this.state.ws13dproblemindex ? this.state.ws13dproblemindex : 0}
+                                                onPress={(value, index) => { this.setState({ ws13dproblem: value, ws13dproblemindex: index }); console.log(this.state); }}
+                                            />
+                                        </View>
+                                        {this.state.ws13dproblem === '99' &&
+                                            <View style={{ marginBottom: 20 }}>
+                                                <Text style={styles.headingLetter}>13A. Specify other reason</Text>
+                                                <FormInput
+                                                    value={this.state.ws13adprobsp}
+                                                    onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
+                                                />
+                                            </View>
+                                        }
                                     </View>
                                 }
                             </View>
                         }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>7. Was a DBS sample collected?</Text>
-                            <RadioForm
-                                animation={false}
-                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                buttonColor={'#4B5461'}
-                                formHorizontal={false}
-                                labelHorizontal
-                                radio_props={this.dbssampleoptions}
-                                initial={this.state.ws7dcollectindex ? this.state.ws7dcollectindex : 0}
-                                onPress={(value, index) => {
-                                    this.setState({ ws7dcollect: value, ws7dcollectindex: index });
-                                    if (value === '01') {
-                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}D`;
-                                    } else {
-                                        this.state.specimenDBSID = '';
-                                    }
-                                }}
-                            />
-                        </View>
-                        {this.state.ws7dcollect !== '01' &&
-                            <View>
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>7A. Specify reason?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.bloodreasonoptions}
-                                        initial={this.state.ws7adcollectnoindex ? this.state.ws7adcollectnoindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws7adcollectno: value, ws7adcollectnoindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
-                                {this.state.ws7adcollectno === '99' &&
-                                    <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>7B. Specify other reason</Text>
-                                        <FormInput
-                                            value={this.state.ws7bdcollectoth}
-                                            onChangeText={(ws7bdcollectoth) => this.setState({ ws7bdcollectoth })}
-                                        />
-                                    </View>
-                                }
+                        {(this.state.eligible) &&
+                            <View style={{ marginBottom: 20 }}>
+                                <Text style={styles.headingLetter}>15. Interviewer observation (Related to Blood Collection)</Text>
+                                <FormInput
+                                    value={this.state.ws13adprobsp}
+                                    onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
+                                />
                             </View>
                         }
-                        {this.state.ws7dcollect === '01' &&
-                            <View>
-                                <Text style={styles.headingLetter}>{`Specimen DBS ID: ${this.state.specimenDBSID}`}</Text>
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.spotsCollectedoptions}
-                                        initial={this.state.ws11dspotsindex ? this.state.ws11dspotsindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws11dspots: value, ws11dspotsindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>12A. SPECIMEN QUALITY DBS1?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.adequateoptions}
-                                        initial={this.state.ws12adqual1index ? this.state.ws12adqual1index : 0}
-                                        onPress={(value, index) => { this.setState({ ws12adqual1: value, ws12adqual1index: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>12B. SPECIMEN QUALITY DBS2?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.adequateoptions}
-                                        initial={this.state.ws12adqual2index ? this.state.ws12adqual2index : 0}
-                                        onPress={(value, index) => { this.setState({ ws12adqual2: value, ws12adqual2index: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>12C. SPECIMEN QUALITY DBS3?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.adequateoptions}
-                                        initial={this.state.ws12adqual3index ? this.state.ws12adqual3index : 0}
-                                        onPress={(value, index) => { this.setState({ ws12adqual3: value, ws12adqual3index: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>12D. SPECIMEN QUALITY DBS4?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.adequateoptions}
-                                        initial={this.state.ws12adqual4index ? this.state.ws12adqual4 : 0}
-                                        onPress={(value, index) => { this.setState({ ws12adqual4: value, ws12adqual4index: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>12E. SPECIMEN QUALITY DBS5?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.adequateoptions}
-                                        initial={this.state.ws12adqual5index ? this.state.ws12adqual5index : 0}
-                                        onPress={(value, index) => { this.setState({ ws12adqual5: value, ws12adqual5index: index }); console.log(this.state); }}
-                                    />
-                                </View>
-
-                                <View style={{ marginBottom: 20 }}>
-                                    <Text style={styles.headingLetter}>13. Specimen collection problem?</Text>
-                                    <RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.dbsspecimenproblemoptions}
-                                        initial={this.state.ws13dproblemindex ? this.state.ws13dproblemindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws13dproblem: value, ws13dproblemindex: index }); console.log(this.state); }}
-                                    />
-                                </View>
-                                {this.state.ws13dproblem === '99' &&
-                                    <View style={{ marginBottom: 20 }}>
-                                        <Text style={styles.headingLetter}>13A. Specify other reason</Text>
-                                        <FormInput
-                                            value={this.state.ws13adprobsp}
-                                            onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
-                                        />
-                                    </View>
-                                }
-                            </View>
-                        }
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>15. Interviewer observation (Related to Blood Collection)</Text>
-                            <FormInput
-                                value={this.state.ws13adprobsp}
-                                onChangeText={(ws13adprobsp) => this.setState({ ws13adprobsp })}
-                            />
-                        </View>
                     </View>
                 }
             </ScrollView >
