@@ -368,7 +368,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         {this.state.w3dob === '02' &&
                             <View style={{ marginBottom: 20 }}>
-                                <Text style={styles.headingLetter}>4. How old are you?</Text>
+                                <Text style={styles.headingLetter}>4. How old are you?(In completed years)</Text>
                                 <FormInput
                                     keyboardType='numeric'
                                     value={this.state.w4age}
@@ -378,29 +378,30 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>5. What is your current marital status?</Text>
-							<RadioForm
-                                        animation={false}
-                                        style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
-                                        labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
-                                        buttonColor={'#4B5461'}
-                                        formHorizontal={false}
-                                        labelHorizontal
-                                        radio_props={this.maritalStatus}
-                                        initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : 0}
-                                        onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
-							/>
-                            
-                        </View>
-
-                        <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>6. How many children have you had?</Text>
-                            <FormInput
-                                keyboardType='numeric'
-                                maxLength={1}
-                                value={this.state.w6children}
-                                onChangeText={(w6children) => this.setState({ w6children })}
+                            <RadioForm
+                                animation={false}
+                                style={{ marginTop: 20, marginLeft: 17, alignItems: 'flex-start' }}
+                                labelStyle={{ margin: 10, alignItems: 'flex-start', textAlign: 'left', fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
+                                buttonColor={'#4B5461'}
+                                formHorizontal={false}
+                                labelHorizontal
+                                radio_props={this.maritalStatus}
+                                initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : 0}
+                                onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
                             />
+
                         </View>
+                        {this.state.w5maritalstat !== '02' &&
+                            <View style={{ marginBottom: 20 }}>
+                                <Text style={styles.headingLetter}>6. How many living children do you have at this moment?</Text>
+                                <FormInput
+                                    keyboardType='numeric'
+                                    maxLength={1}
+                                    value={this.state.w6children}
+                                    onChangeText={(w6children) => this.setState({ w6children })}
+                                />
+                            </View>
+                        }
                         {this.state.surveyType === '02' &&
                             <View>
                                 <View style={{ marginBottom: 20 }}>
@@ -528,7 +529,14 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         labelHorizontal
                                         radio_props={this.specimenmethodoptions}
                                         initial={this.state.ws1scollecthowindex ? this.state.ws1scollecthowindex : 0}
-                                        onPress={(value, index) => { this.setState({ ws1scollecthow: value, ws1scollecthowindex: index }); console.log(this.state); }}
+                                        onPress={(value, index) => {
+                                            this.setState({ ws1scollecthow: value, ws1scollecthowindex: index });
+                                            if (value === '01' || value === '02') {
+                                                this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                            } else {
+                                                this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}V`;
+                                            }
+                                        }}
                                     />
                                 </View>
 
@@ -587,7 +595,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 onPress={(value, index) => {
                                     this.setState({ ws7dcollect: value, ws7dcollectindex: index });
                                     if (value === '01') {
-                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}D`;
                                     } else {
                                         this.state.specimenDBSID = '';
                                     }
