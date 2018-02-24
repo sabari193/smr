@@ -86,7 +86,7 @@ export default class RandomListScreen extends React.Component {
     render() {
         const { navigate } = this.props.navigation;
         return (
-            <ScrollView style={{ backgroundColor: 'white', opacity: 0.7 }}>
+            <ScrollView style={{ backgroundColor: '#e9e9e9'}}>
                 {(this.state.loading) &&
                     <View style={{ marginTop: 250, marginLeft: 160 }}>
                         {/* <Image

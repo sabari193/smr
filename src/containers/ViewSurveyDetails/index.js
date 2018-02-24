@@ -80,12 +80,11 @@ export default class ViewSurveyDetails extends React.Component {
                 <ScrollView style={{ backgroundColor: 'white' }}>
                     {(!this.state.householdSurveyStatus) &&
                         <View>
-                            <Button
-                                buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                                title={`Household survey for ${params.HouseholdID}`}
-                                onPress={() =>
-                                    navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
-                                }
+                            <WalletHeader
+                                headingIcon={'H'}
+                                heading={`Household survey for ${params.HouseholdID}`}
+                                rightIcon={'pencil-square'}
+                                rightIconClick={() => navigate('HouseholdForm', { HouseholdID: params.HouseholdID })}
                             />
                             <Text style={{ fontSize: 25, marginLeft: 30 }}> {`${this.state.personList.length - 1} Member(s) Available`} </Text>
                         </View>

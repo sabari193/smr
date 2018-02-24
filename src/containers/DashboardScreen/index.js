@@ -109,7 +109,7 @@ export default class DashboardScreen extends React.Component {
   }
   render() {
     return (
-      <View style={{ backgroundColor: '#F2F5FB', flex: 1 }}>
+      <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <ScrollView>
           {(this.state.clusterID) &&
             <ProfileMenuHeader
