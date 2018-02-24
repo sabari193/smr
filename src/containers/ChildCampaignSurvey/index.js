@@ -1339,7 +1339,14 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 labelHorizontal
                                 radio_props={this.specimenmethodoptions}
                                 initial={this.state.cs1scollecthowindex ? this.state.cs1scollecthowindex : 0}
-                                onPress={(value, index) => { this.setState({ cs1scollecthow: value, cs1scollecthowindex: index }); console.log(this.state); }}
+                                onPress={(value, index) => {
+                                    this.setState({ cs1scollecthow: value, cs1scollecthowindex: index });
+                                    if (value === '01' || value === '02') {
+                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                    } else {
+                                        this.state.specimenCapillaryID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}V`;
+                                    }
+                                }}
                             />
                         </View>
 
@@ -1397,7 +1404,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                     this.setState({ cs7dcollect: value, cs7dcollectindex: index });
                                     if (value === '01') {
                                         console.log('params', params);
-                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}S`;
+                                        this.state.specimenDBSID = `${this.state.clusterID + params.person.AgeGroup + params.person.Sno}D`;
                                     } else {
                                         this.state.specimenDBSID = '';
                                     }
