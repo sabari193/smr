@@ -52,6 +52,7 @@ export default class RandomListScreen extends React.Component {
                                                 const householdEntry = {};
                                                 householdEntry.Sno = '';
                                                 householdEntry.AgeGroup = 'H';
+                                                householdEntry.AgeDis = '';
                                                 householdEntry.Name = '';
                                                 householdEntry.Sex = '';
                                                 householdEntry.HouseholdID = value.HouseholdID;

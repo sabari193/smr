@@ -105,6 +105,7 @@ SurveyInformation.schema = {
         surveyID: { type: 'int' },
         HouseholdID: { type: 'string' },
         AgeGroup: { type: 'string' },
+        AgeDis: { type: 'string' },
         status: 'string',
         Name: 'string',
         Sex: 'string',

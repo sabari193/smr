@@ -341,11 +341,11 @@ export default class WomenCampaignSurvey extends ValidationComponent {
 				<View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Household Characteristics (HC) Form</Text>
                 </View>
-				<View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Name: `${params.person.Name}`</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>`${params.person.AgeDis}`</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sex: `${params.person.Sex}`</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sno: `${params.person.Sno}`</Text>
+				<View style={{ backgroundColor: '#ebebeb', padding: 25, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Name: ${params.person.Name}`}</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`${params.person.AgeDis}`}</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sex: ${params.person.Sex}`}</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sno: ${params.person.Sno}`}</Text>
                 </View>
 
                 <View style={{ marginBottom: 20 }}>

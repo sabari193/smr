@@ -577,13 +577,13 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                 </View> */}
 				
 				<View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Child Form for `${params.person.Name}`</Text>
+                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>{`Child Form for ${params.person.Name}`}</Text>
                 </View>
-				<View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Name: `${params.person.Name}`</Text>
-					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>`${params.person.AgeDis}`</Text>
-					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sex: `${params.person.Sex}`</Text>
-					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sno: `${params.person.Sno}`</Text>
+				<View style={{ backgroundColor: '#ebebeb', padding: 25, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Name: ${params.person.Name}`}</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`${params.person.AgeDis}`}</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sex: ${params.person.Sex}`}</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sno: ${params.person.Sno}`}</Text>
                 </View>
 
                 <View style={{ marginBottom: 20 }}>
@@ -1743,7 +1743,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                 }}
                                             />
                                         </View>
-                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
+                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${new Date().getTime()}`}</Text>
 
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>5. Specimen quality?</Text>
@@ -1836,7 +1836,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.cs7dcollect === '01' &&
                                     <View>
-                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
+                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${new Date().getTime()}`}</Text>
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
                                             <RadioForm
