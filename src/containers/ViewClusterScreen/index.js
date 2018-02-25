@@ -27,7 +27,7 @@ export default class ViewClusterScreen extends React.Component {
                 <Button
                     buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
                     fontSize={30}
-                    title='Submit'
+                    title='Submit to Server'
                     onPress={params.handleSubmit}
                 />
             ),

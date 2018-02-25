@@ -39,7 +39,7 @@ export default class HouseHoldScreen extends React.Component {
         <Button
           buttonStyle={{ width: 170, height: 100, backgroundColor: '#4c9689' }}
           fontSize={25}
-          title='Submit'
+          title='Save HH'
           onPress={params.handleSave}
         />
       ),

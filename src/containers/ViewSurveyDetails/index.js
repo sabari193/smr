@@ -82,7 +82,7 @@ export default class ViewSurveyDetails extends React.Component {
                         <View>
                             <WalletHeader
                                 headingIcon={'H'}
-                                heading={`Household survey for ${params.HouseholdID}`}
+                                heading={`Household form for HH ID: ${params.HouseholdID}`}
                                 rightIcon={'pencil-square'}
                                 rightIconClick={() => navigate('HouseholdForm', { HouseholdID: params.HouseholdID })}
                             />
@@ -93,7 +93,7 @@ export default class ViewSurveyDetails extends React.Component {
                         <View>
                             <WalletHeader
                                 headingIcon={'H'}
-                                heading={`Household survey completed for ${params.HouseholdID}`}
+                                heading={`Household form for HH ID: ${params.HouseholdID}`}
                                 rightIcon={'check-square-o'}
                             />
                             {this.state.personList.map((person, index) => (<View key={index}>
@@ -102,14 +102,14 @@ export default class ViewSurveyDetails extends React.Component {
                                         {(person.status != 'open') &&
                                             <WalletHeader
                                                 headingIcon={person.Sex}
-                                                heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                                heading={`${person.Name} / ${person.AgeDis} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
                                                 rightIcon='check-square-o'
                                             />
                                         }
                                         {(person.status == 'open') &&
                                             <WalletHeader
                                                 headingIcon={person.Sex}
-                                                heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                                heading={`${person.Name} / ${person.AgeDis} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
                                                 rightIcon='pencil-square'
                                                 rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) })}
                                             />

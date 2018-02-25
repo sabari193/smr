@@ -71,7 +71,7 @@ export default class ViewCompletedSurveyDetails extends React.Component {
                 <ScrollView style={{ backgroundColor: 'white' }}>
                     <Button
                         buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                        title={`Household survey for ${params.HouseholdID}`}
+                        title={`Household form for HH ID: ${params.HouseholdID}`}
                         onPress={() =>
                             navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
                         }
@@ -81,7 +81,7 @@ export default class ViewCompletedSurveyDetails extends React.Component {
                             <View>
                                 <WalletHeader
                                     headingIcon={person.Sex}
-                                    heading={`${person.Name} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
+                                    heading={`${person.Name} / ${person.AgeDis} / ${person.AgeGroup == 'C' ? 'Women campaign Form' : 'Children campaign Form'}`}
                                     rightIcon='pencil-square'
                                     rightIconClick={() => person.AgeGroup == 'C' ? navigate('WomenCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) }) : navigate('ChildCampaignSurvey', { HouseholdID: params.HouseholdID, person: JSON.parse(JSON.stringify(person)) })}
                                 />

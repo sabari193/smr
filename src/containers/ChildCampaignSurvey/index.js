@@ -575,6 +575,16 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                 {/* <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetterErr}>{this.getErrorMessages()}</Text>
                 </View> */}
+				
+				<View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Child Form for `${params.person.Name}`</Text>
+                </View>
+				<View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Name: `${params.person.Name}`</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>`${params.person.AgeDis}`</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sex: `${params.person.Sex}`</Text>
+					<Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sno: `${params.person.Sno}`</Text>
+                </View>
 
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>Child Full Name</Text>
@@ -738,6 +748,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.surveyType === '02' &&
                                     <View>
+									<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Measles and Rubella campaign immunization</Text>
+                            </View>
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>Was the child living in this household when MR campaign was occuring? </Text>
                                             <RadioForm
@@ -1024,6 +1037,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 }
                                 {params.person.AgeGroup === 'A' &&
                                     <View>
+									
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>21. Do you have a routine immunization card for child? </Text>
                                             <RadioForm
@@ -1040,6 +1054,12 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                         </View >
                                         {this.state.c21immcard === '01' &&
                                             <View>
+											<View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
+												<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>information from Immunization card</Text>
+											</View>
+											<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+												<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>MCV</Text>
+											</View>
                                                 <View style={{ marginBottom: 20 }}>
                                                     <Text style={styles.headingLetter}>22A. Vaccine - MCV1? </Text>
                                                     <RadioForm
@@ -1165,6 +1185,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                         />
                                                     </View>
                                                 }
+												<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+													<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Polio</Text>
+												</View>
                                                 <View style={{ marginBottom: 20 }}>
                                                     <Text style={styles.headingLetter}>24c. OPV-Birth dose? </Text>
                                                     <RadioForm
@@ -1280,6 +1303,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                         />
                                                     </View>
                                                 }
+												<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+													<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Penta</Text>
+												</View>
                                                 <View style={{ marginBottom: 20 }}>
                                                     <Text style={styles.headingLetter}>24H. DTP/Penta -1 ? </Text>
                                                     <RadioForm
@@ -1350,6 +1376,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                         />
                                                     </View>
                                                 }
+												<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+													<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Rotavirus</Text>
+												</View>
                                                 <View style={{ marginBottom: 20 }}>
                                                     <Text style={styles.headingLetter}>24K. Rota 1? </Text>
                                                     <RadioForm
@@ -1419,6 +1448,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                         />
                                                     </View>
                                                 }
+												<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+													<Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Japanese Encephalitis</Text>
+												</View>
                                                 <View style={{ marginBottom: 20 }}>
                                                     <Text style={styles.headingLetter}>24N. Japanese Encephalitis 1? </Text>
                                                     <RadioForm
@@ -1634,9 +1666,9 @@ export default class ChildCampaignSurvey extends ValidationComponent {
 
                         {this.state.c3areason === '01' &&
                             <View>
-                                <View>
-                                    <Text style={styles.headingLetter}>SPECIMEN COLLECTION</Text>
-                                </View>
+                            <View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>SPECIMEN COLLECTION</Text>
+                            </View>
 
                                 <View style={{ marginBottom: 20 }}>
                                     <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
@@ -1711,7 +1743,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                                 }}
                                             />
                                         </View>
-                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenCapillaryID}`}</Text>
+                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
 
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>5. Specimen quality?</Text>
@@ -1804,7 +1836,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.cs7dcollect === '01' &&
                                     <View>
-                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenDBSID}`}</Text>
+                                        <Text style={styles.headingLetter}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
                                         <View style={{ marginBottom: 20 }}>
                                             <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
                                             <RadioForm

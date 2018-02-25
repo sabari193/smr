@@ -337,6 +337,16 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 {/* <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetterErr}>{this.getErrorMessages()}</Text>
                 </View> */}
+				
+				<View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Household Characteristics (HC) Form</Text>
+                </View>
+				<View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Name: `${params.person.Name}`</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>`${params.person.AgeDis}`</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sex: `${params.person.Sex}`</Text>
+					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sno: `${params.person.Sno}`</Text>
+                </View>
 
                 <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetter}>1. Women's Full Name</Text>
@@ -346,7 +356,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                     />
                 </View>
 
-                <View style={{ marginBottom: 20 }}>
+                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                     <Text style={styles.headingLetter}>2a. Was the consent/assent taken for the woman?</Text>
                     <RadioForm
                         animation={false}
@@ -362,7 +372,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 </View>
                 {this.state.w2aconsent === '01' &&
                     <View>
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                             <Text style={styles.headingLetter}>3. Do you know your date of birth?</Text>
                             <RadioForm
                                 animation={false}
@@ -414,7 +424,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         }
                         {(this.state.eligible) &&
                             <View>
-                                <View style={{ marginBottom: 20 }}>
+                                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                     <Text style={styles.headingLetter}>5. What is your current marital status?</Text>
                                     <RadioForm
                                         animation={false}
@@ -442,7 +452,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.surveyType === '02' &&
                                     <View>
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>7. Were you living in this household when the MR campaign was occuring?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -457,7 +467,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>8. Did you receive a MR dose during the recent vaccination campaign?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -474,7 +484,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                     </View>
                                 }
 
-                                <View style={{ marginBottom: 20 }}>
+                                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                     <Text style={styles.headingLetter}>9. Do you have any history of vaccines with rubella vaccine such as a Measles-Rubella(MR) or Measles-Mumps-Rubella(MMR) vaccine?</Text>
                                     <RadioForm
                                         animation={false}
@@ -502,11 +512,11 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         </View>
                         {this.state.w2aconsent === '01' && this.state.eligible &&
                             <View>
-                                <View>
-                                    <Text style={styles.headingLetter}>SPECIMEN COLLECTION</Text>
-                                </View>
+							<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+                                <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>SPECIMEN COLLECTION</Text>
+                            </View>
 
-                                <View style={{ marginBottom: 20 }}>
+                                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                     <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
                                     <RadioForm
                                         animation={false}
@@ -515,8 +525,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         buttonColor={'#4B5461'}
                                         formHorizontal={false}
                                         labelHorizontal
-                                        radio_props={this.optionList}
-                                        initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 0}
+                                        radio_props={this.optionListBoolean}
+                                        initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 1}
                                         onPress={(value, index) => {
                                             this.setState({ ws1scollect: value, ws1scollectindex: index });
                                             if (value === '01') {
@@ -530,7 +540,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
 
                                 {this.state.ws1scollect === '02' &&
                                     <View>
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>1A. Specify reason?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -559,7 +569,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 {this.state.ws1scollect === '01' &&
                                     <View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>1C. How specimen was collected?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -580,9 +590,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 }}
                                             />
                                         </View>
-                                        <Text style={styles.headingLetterErr}>{`Specimen Capillary ID: ${this.state.specimenCapillaryID}`}</Text>
+                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>5. Specimen quality?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -597,7 +607,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>6. Specimen collection problem?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -623,7 +633,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         }
                                     </View>
                                 }
-                                <View style={{ marginBottom: 20 }}>
+                                <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                     <Text style={styles.headingLetter}>7. Was a DBS sample collected?</Text>
                                     <RadioForm
                                         animation={false}
@@ -646,7 +656,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 </View>
                                 {this.state.ws7dcollect !== '01' &&
                                     <View>
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>7A. Specify reason?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -673,8 +683,8 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.ws7dcollect === '01' &&
                                     <View>
-                                        <Text style={styles.headingLetterErr}>{`Specimen DBS ID: ${this.state.specimenDBSID}`}</Text>
-                                        <View style={{ marginBottom: 20 }}>
+                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -689,7 +699,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>12A. SPECIMEN QUALITY DBS1?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -704,7 +714,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>12B. SPECIMEN QUALITY DBS2?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -719,7 +729,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>12C. SPECIMEN QUALITY DBS3?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -734,7 +744,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>12D. SPECIMEN QUALITY DBS4?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -749,7 +759,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>12E. SPECIMEN QUALITY DBS5?</Text>
                                             <RadioForm
                                                 animation={false}
@@ -764,7 +774,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                             />
                                         </View>
 
-                                        <View style={{ marginBottom: 20 }}>
+                                        <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>13. Specimen collection problem?</Text>
                                             <RadioForm
                                                 animation={false}

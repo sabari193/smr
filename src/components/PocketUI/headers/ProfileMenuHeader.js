@@ -31,7 +31,7 @@ const ProfileMenuHeader = props => {
     <View style={{ backgroundColor: '#fff' }}>
       <View style={styles.hero}>
           <Image
-              style={{ height: 150, width: 150 }}
+              style={{ height: 120, width: 120 }}
               source={require('../../../images/logo.png')}
           />
             <Text style={styles.titleText}>Impact of measles rubella (MR) vaccination campaign on population immunity in India (IMRVI study)</Text>
@@ -170,8 +170,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
-    padding: 25,
-    height: 400,
+    padding: 15,
+    height: 300,
   },
   menuSection: {
     flexDirection: 'row',
