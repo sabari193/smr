@@ -337,15 +337,15 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 {/* <View style={{ marginBottom: 20 }}>
                     <Text style={styles.headingLetterErr}>{this.getErrorMessages()}</Text>
                 </View> */}
-				
-				<View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
+
+                <View style={{ backgroundColor: '#a3a7a7', height: 50, display: 'flex', justifyContent: 'center' }}>
                     <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>Household Characteristics (HC) Form</Text>
                 </View>
-				<View style={{ backgroundColor: '#ebebeb', padding: 25, display: 'flex', justifyContent: 'center' }}>
-                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Name: ${params.person.Name}`}</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`${params.person.AgeDis}`}</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sex: ${params.person.Sex}`}</Text>
-					<Text style={{ fontSize: 24, color: '#333', fontWeight: '200', textAlign: 'left' }}>{`Sno: ${params.person.Sno}`}</Text>
+                <View style={{ backgroundColor: '#ebebeb', height: 50, display: 'flex', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Name: `${params.person.Name}`</Text>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>`${params.person.AgeDis}`</Text>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sex: `${params.person.Sex}`</Text>
+                    <Text style={{ fontSize: 18, color: '#333', fontWeight: '200', textAlign: 'left' }}>Sno: `${params.person.Sno}`</Text>
                 </View>
 
                 <View style={{ marginBottom: 20 }}>
@@ -512,9 +512,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         </View>
                         {this.state.w2aconsent === '01' && this.state.eligible &&
                             <View>
-							<View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
-                                <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>SPECIMEN COLLECTION</Text>
-                            </View>
+                                <View style={{ backgroundColor: '#e2e4e4', height: 50, display: 'flex', justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 24, color: '#333', fontWeight: '500', textAlign: 'center' }}>SPECIMEN COLLECTION</Text>
+                                </View>
 
                                 <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                     <Text style={styles.headingLetter}>1. Was a Capillary Liquid Blood sample collected?</Text>
@@ -590,7 +590,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 }}
                                             />
                                         </View>
-                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
+                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenCapillaryID}`} :: {`Collection Date & Time: ${moment().format('MM-DD-YYY h:mm:ss a')}`}</Text>
 
                                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>5. Specimen quality?</Text>
@@ -683,7 +683,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 }
                                 {this.state.ws7dcollect === '01' &&
                                     <View>
-                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${Date().getTime()}`}</Text>
+                                        <Text style={styles.headingLetterErr}>{`Specimen ID: ${this.state.specimenDBSID}`} :: {`Collection Date & Time: ${moment().format('MM-DD-YYY h:mm:ss a')}`}</Text>
                                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>11. Number of spots collected?</Text>
                                             <RadioForm
