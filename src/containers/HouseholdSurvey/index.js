@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableHighlight, ScrollView, View, Alert, TextInput } from 'react-native';
+import { StyleSheet, DatePickerAndroid, ScrollView, View, Alert, TextInput } from 'react-native';
 import moment from 'moment';
 import _ from 'lodash';
 import ValidationComponent from 'react-native-form-validator';
@@ -221,6 +221,22 @@ export default class HouseHoldSurvey extends ValidationComponent {
         });
     }
 
+    async openDatePicker(value) {
+        const { params } = this.props.navigation.state;
+        try {
+            const { action, year, month, day } = await DatePickerAndroid.open({
+                date: new Date(),
+                maxDate: new Date()
+            });
+            if (action !== DatePickerAndroid.dismissedAction) {
+                const newState = {};
+                newState[value] = `${day}-${month + 1}-${year}`;
+                this.setState(newState);
+            }
+        } catch ({ code, message }) {
+            console.log('Cannot open date picker', message);
+        }
+    }
 
     _goHome() {
         const { dispatch } = this.props.navigation;
@@ -605,6 +621,9 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                     ref="h32bdateofvisit"
                                     value={this.state.h32bdateofvisit}
                                     onChangeText={(name) => this.setState({ h32bdateofvisit: name })}
+                                    onFocus={() => {
+                                        this.openDatePicker('h32bdateofvisit');
+                                    }}
                                 />
                             </View>
                         }
