@@ -44,6 +44,7 @@ const Card = props => {
     expiration,
     titleStyle,
     onPress,
+    clusterScreen
     ...attributes
   } = props;
 
@@ -59,7 +60,10 @@ const Card = props => {
         {...attributes}
       >
         {expiration ? <View
-          style={[
+          style={clusterScreen ? [
+            styles.cardColorBlock,
+            { backgroundColor: cardColor, height: 300 },
+          ] : [
             styles.cardColorBlock,
             { backgroundColor: cardColor },
           ]}
@@ -266,8 +270,7 @@ const styles = StyleSheet.create({
     color: colors.grey0,
     opacity: 0.7,
     letterSpacing: 2,
-    lineHeight: 0.1,
-    marginTop: 13,
+    lineHeight: 0.1
   },
   number: {
     fontSize: normalize(20),

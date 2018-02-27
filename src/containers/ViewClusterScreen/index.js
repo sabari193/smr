@@ -175,6 +175,7 @@ export default class ViewClusterScreen extends React.Component {
                                     expiration={`Last Updated : ${house.UpdatedTime}`}
                                     subTitle2={`Household Status : ${house.HouseholdStatusValue}`}
                                     moreText='View'
+                                    clusterScreen
                                 />);
                             }, this)}
                         </View>
