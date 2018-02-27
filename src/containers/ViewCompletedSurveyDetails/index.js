@@ -69,13 +69,14 @@ export default class ViewCompletedSurveyDetails extends React.Component {
         return (
             <View style={styles.container}>
                 <ScrollView style={{ backgroundColor: 'white' }}>
-                    <Button
-                        buttonStyle={{ marginTop: 75, marginBottom: 30 }}
-                        title={`Household form for HH ID: ${params.HouseholdID}`}
-                        onPress={() =>
-                            navigate('HouseholdForm', { HouseholdID: params.HouseholdID })
-                        }
-                    />
+                    <View>
+                        <WalletHeader
+                            headingIcon={'H'}
+                            heading={`Household form for HH ID: ${params.HouseholdID}`}
+                            rightIcon={'pencil-square'}
+                            rightIconClick={() => navigate('HouseholdForm', { HouseholdID: params.HouseholdID })}
+                        />
+                    </View>
                     {this.state.personList.map((person, index) => (<View key={index}>
                         {(person.AgeGroup != 'H') &&
                             <View>
