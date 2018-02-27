@@ -44,7 +44,7 @@ const Card = props => {
     expiration,
     titleStyle,
     onPress,
-    clusterScreen
+    clusterScreen,
     ...attributes
   } = props;
 
