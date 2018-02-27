@@ -163,9 +163,6 @@ export default class HouseHoldSurvey extends ValidationComponent {
             h6astatusothsp: '',
             h8respondentname: '',
             h9relationship: '',
-            h14migratory: '',
-            h15migratorycat: '',
-            h15migratothsp: '',
             h16hhstatus: '',
             h16hhstatusothsp: '',
             h17hhreligion: '',
@@ -177,20 +174,15 @@ export default class HouseHoldSurvey extends ValidationComponent {
             h22hhmaterothsp: '',
             h22atoilettype: '',
             h23afourwheeler: '',
-            h23bbicycle: '',
-            h23cmotorcycle: '',
             h23dland: '',
             h23emobile: '',
-            h24mobile: '',
-            h25facility: '',
             h26vaxfacilitytyp: '',
             h32avisits: '',
             h32bdateofvisit: '',
             h31intcomments: '',
             h27latitude: '',
             h28longitude: '',
-            updatedTime: '',
-            hasError: false
+            updatedTime: ''
         };
 
         this.styles = StyleSheet.create({
@@ -273,28 +265,38 @@ export default class HouseHoldSurvey extends ValidationComponent {
 
     validateRadioOptions() {
         const validation = [];
-        if (this.state.h6astatusvis !== '01') {
-            if (this.state.h6astatusvis1index === -1) {
-                validation[h6astatusvis1index] = false;
+        const otherStateFields = ['accuracy', 'editedField', 'h1hhid', 'h6astatusothsp',
+            'h8respondentname', 'h16hhstatusothsp', 'h22hhmaterothsp', 'h27latitude', 'h28longitude',
+            'h31intcomments', 'h32bdateofvisit', 'updatedTime'];
+        if (this.state.h6astatusvis1) {
+            if (this.state.h6astatusvis1 !== '01') {
                 _.forEach(Object.keys(this.state), (fieldKey) => {
-                    if (fieldKey !== 'h6astatusvis1index') {
-                        validation[fieldKey] = true;
-                    }
+                    validation[fieldKey] = true;
                 });
             } else {
                 _.forEach(Object.keys(this.state), (fieldKey) => {
-                    validation[fieldKey] = true;
+                    if (otherStateFields.indexOf(fieldKey) === -1) {
+                        if (!this.state[fieldKey] || (this.state[fieldKey] === -1)) {
+                            if (this.state[fieldKey] === 0) {
+                                validation[fieldKey] = true;
+                            }
+                            else {
+                                validation[fieldKey] = false;
+                            }
+                        } else {
+                            validation[fieldKey] = true;
+                        }
+                    }
+                    else {
+                        validation[fieldKey] = true;
+                    }
                 });
             }
-        } else {
-            _.forEach(Object.keys(this.state), (fieldKey) => {
-                if (this.state[fieldKey] === -1) {
-                    validation[fieldKey] = false;
-                } else {
-                    validation[fieldKey] = true;
-                }
-            });
         }
+        else {
+            validation.h6astatusvis1 = false;
+        }
+        console.log("validation", validation);
         return validation;
     }
 
@@ -322,19 +324,20 @@ export default class HouseHoldSurvey extends ValidationComponent {
                 h22hhmaterothsp: { required: true },
             });
         }
-        if (this.state.h32avisits === '01') {
+        /* if (this.state.h32avisits === '01') {
             this.validate({
                 h22hhmaterothsp: { required: true },
             });
-        }
+        } */
 
         const RadioValidations = this.validateRadioOptions();
-        console.warn(RadioValidations);
+        console.log('RadioValidations', RadioValidations);
 
         console.log("this.isFormValid()", this.isFormValid());
         console.log("error", this.getErrorMessages());
+        console.log("RadioValidations.includes(false)", _.includes(_.values(RadioValidations), false));
 
-        if (this.isFormValid() && !RadioValidations.includes(false)) {
+        if (this.isFormValid() && !(_.includes(_.values(RadioValidations), false))) {
             this.setState({
                 h1hhid: params.HouseholdID,
                 h4avisit1: moment().format('MM-DD-YYY h:mm:ss a'),
@@ -391,7 +394,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                         formHorizontal={false}
                         labelHorizontal
                         radio_props={this.household_status}
-                        initial={this.state.h6astatusvis1index ? this.state.h6astatusvis1index : -1}
+                        initial={this.state.h6astatusvis1index === 0 ? 0 : (this.state.h6astatusvis1index ? this.state.h6astatusvis1index : -1)}
                         onPress={(value, index) => {
                             this.setState({ h6astatusvis1: value, h6astatusvis1index: index }); console.log(this.state);
                         }}
@@ -400,7 +403,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                         <View>
                             <Text style={styles.headingLetter}>Others Specify*</Text>
                             <FormInput
-                                ref="h6astatusothsp"
+                                ref='h6astatusothsp'
                                 value={this.state.h6astatusothsp}
                                 onChangeText={(name) => this.setState({ h6astatusothsp: name })}
                             />
@@ -412,7 +415,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                         <View style={{ marginBottom: 20 }}>
                             <Text style={styles.headingLetter}>4. Respondent to household questionnaire*</Text>
                             <FormInput
-                                ref="h8respondentname"
+                                ref='h8respondentname'
                                 value={this.state.h8respondentname}
                                 onChangeText={(name) => this.setState({ h8respondentname: name })}
                             />
@@ -427,7 +430,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.relationship}
-                                initial={this.state.h9relationshipindex ? this.state.h9relationshipindex : -1}
+                                initial={this.state.h9relationshipindex === 0 ? 0 : (this.state.h9relationshipindex ? this.state.h9relationshipindex : -1)}
                                 onPress={(value, index) => { this.setState({ h9relationship: value, h9relationshipindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -444,7 +447,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.religion}
-                                initial={this.state.h17hhreligionindex ? this.state.h17hhreligionindex : -1}
+                                initial={this.state.h17hhreligionindex === 0 ? 0 : (this.state.h17hhreligionindex ? this.state.h17hhreligionindex : -1)}
                                 onPress={(value, index) => { this.setState({ h17hhreligion: value, h17hhreligionindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -458,7 +461,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionList}
-                                initial={this.state.h18hhbplindex ? this.state.h18hhbplindex : -1}
+                                initial={this.state.h18hhbplindex === 0 ? 0 : (this.state.h18hhbplindex ? this.state.h18hhbplindex : -1)}
                                 onPress={(value, index) => { this.setState({ h18hhbpl: value, h18hhbplindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -472,7 +475,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.headofHouseholdEducation}
-                                initial={this.state.h19hheducationindex ? this.state.h19hheducationindex : -1}
+                                initial={this.state.h19hheducationindex === 0 ? 0 : (this.state.h19hheducationindex ? this.state.h19hheducationindex : -1)}
                                 onPress={(value, index) => { this.setState({ h19hheducation: value, h19hheducationindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -486,7 +489,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.householdOccupation}
-                                initial={this.state.h20hhoccupationindex ? this.state.h20hhoccupationindex : -1}
+                                initial={this.state.h20hhoccupationindex === 0 ? 0 : (this.state.h20hhoccupationindex ? this.state.h20hhoccupationindex : -1)}
                                 onPress={(value, index) => { this.setState({ h20hhoccupation: value, h20hhoccupationindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -500,7 +503,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.caste}
-                                initial={this.state.h21hhcasteindex ? this.state.h21hhcasteindex : -1}
+                                initial={this.state.h21hhcasteindex === 0 ? 0 : (this.state.h21hhcasteindex ? this.state.h21hhcasteindex : -1)}
                                 onPress={(value, index) => { this.setState({ h21hhcaste: value, h21hhcasteindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -514,7 +517,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.householdCategory}
-                                initial={this.state.h16hhstatusindex ? this.state.h16hhstatusindex : -1}
+                                initial={this.state.h16hhstatusindex === 0 ? 0 : (this.state.h16hhstatusindex ? this.state.h16hhstatusindex : -1)}
                                 onPress={(value, index) => { this.setState({ h16hhstatus: value, h16hhstatusindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -541,7 +544,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.housingMaterial}
-                                initial={this.state.h22hhmaterialsindex ? this.state.h22hhmaterialsindex : -1}
+                                initial={this.state.h22hhmaterialsindex === 0 ? 0 : (this.state.h22hhmaterialsindex ? this.state.h22hhmaterialsindex : -1)}
                                 onPress={(value, index) => { this.setState({ h22hhmaterials: value, h22hhmaterialsindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -566,7 +569,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.toiletFacility}
-                                initial={this.state.h22atoilettypeindex ? this.state.h22atoilettypeindex : -1}
+                                initial={this.state.h22atoilettypeindex === 0 ? 0 : (this.state.h22atoilettypeindex ? this.state.h22atoilettypeindex : -1)}
                                 onPress={(value, index) => { this.setState({ h22atoilettype: value, h22atoilettypeindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -581,7 +584,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionListBoolean}
-                                initial={this.state.h23afourwheelerindex ? this.state.h23afourwheelerindex : -1}
+                                initial={this.state.h23afourwheelerindex === 0 ? 0 : (this.state.h23afourwheelerindex ? this.state.h23afourwheelerindex : -1)}
                                 onPress={(value, index) => { this.setState({ h23afourwheeler: value, h23afourwheelerindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -596,7 +599,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionListBoolean}
-                                initial={this.state.h23dlandindex ? this.state.h23dlandindex : -1}
+                                initial={this.state.h23dlandindex === 0 ? 0 : (this.state.h23dlandindex ? this.state.h23dlandindex : -1)}
                                 onPress={(value, index) => { this.setState({ h23dland: value, h23dlandindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -610,7 +613,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionListMother}
-                                initial={this.state.h23emobileindex ? this.state.h23emobileindex : 0}
+                                initial={this.state.h23emobileindex === 0 ? 0 : (this.state.h23emobileindex ? this.state.h23emobileindex : -1)}
                                 onPress={(value, index) => { this.setState({ h23emobile: value, h23emobileindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -627,7 +630,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.healthFacility}
-                                initial={this.state.h26vaxfacilitytyp ? this.state.h26vaxfacilitytyp : 0}
+                                initial={this.state.h26vaxfacilitytypindex === 0 ? 0 : (this.state.h26vaxfacilitytypindex ? this.state.h26vaxfacilitytypindex : -1)}
                                 onPress={(value, index) => { this.setState({ h26vaxfacilitytyp: value, h26vaxfacilitytypindex: index }); console.log(this.state); }}
                             />
                         </View>
@@ -641,7 +644,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionListOneTwo}
-                                initial={this.state.h32avisits ? this.state.h32avisits : 0}
+                                initial={this.state.h32avisitsindex === 0 ? 0 : (this.state.h32avisitsindex ? this.state.h32avisitsindex : -1)}
                                 onPress={(value, index) => { this.setState({ h32avisits: value, h32avisitsindex: index }); console.log(this.state); }}
                             />
                         </View>
