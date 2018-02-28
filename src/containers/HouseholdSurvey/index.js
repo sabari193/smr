@@ -223,7 +223,9 @@ export default class HouseHoldSurvey extends ValidationComponent {
             });
             if (action !== DatePickerAndroid.dismissedAction) {
                 const newState = {};
-                newState[value] = `${day}-${month + 1}-${year}`;
+                const dayV = `0${day}`.slice('-2');
+                const monthV = `0${month + 1}`.slice('-2');
+                newState[value] = `${dayV}-${monthV}-${year}`;
                 this.setState(newState);
             }
         } catch ({ code, message }) {
@@ -279,24 +281,21 @@ export default class HouseHoldSurvey extends ValidationComponent {
                         if (!this.state[fieldKey] || (this.state[fieldKey] === -1)) {
                             if (this.state[fieldKey] === 0) {
                                 validation[fieldKey] = true;
-                            }
-                            else {
+                            }                            else {
                                 validation[fieldKey] = false;
                             }
                         } else {
                             validation[fieldKey] = true;
                         }
-                    }
-                    else {
+                    }                    else {
                         validation[fieldKey] = true;
                     }
                 });
             }
-        }
-        else {
+        }        else {
             validation.h6astatusvis1 = false;
         }
-        console.log("validation", validation);
+        console.log('validation', validation);
         return validation;
     }
 
@@ -333,9 +332,9 @@ export default class HouseHoldSurvey extends ValidationComponent {
         const RadioValidations = this.validateRadioOptions();
         console.log('RadioValidations', RadioValidations);
 
-        console.log("this.isFormValid()", this.isFormValid());
-        console.log("error", this.getErrorMessages());
-        console.log("RadioValidations.includes(false)", _.includes(_.values(RadioValidations), false));
+        console.log('this.isFormValid()', this.isFormValid());
+        console.log('error', this.getErrorMessages());
+        console.log('RadioValidations.includes(false)', _.includes(_.values(RadioValidations), false));
 
         if (this.isFormValid() && !(_.includes(_.values(RadioValidations), false))) {
             this.setState({

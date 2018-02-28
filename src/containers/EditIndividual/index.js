@@ -48,7 +48,12 @@ export default class EditIndividual extends React.Component {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
+                const dayV = `0${day}`.slice('-2');
+                const monthV = `0${month + 1}`.slice('-2');
+                this.setState({
+                    dob: `${dayV}-${monthV}-${year}`,
+                    selectedDate: `${year}${monthV}${dayV}`
+                });
             }
         } catch ({ code, message }) {
             console.log('Cannot open date picker', message);
@@ -60,9 +65,9 @@ export default class EditIndividual extends React.Component {
         let end;
         if (this.state.selectedDate) {
             end = moment(this.state.selectedDate);
-        }        else {
+        } else {
             const dobString = String(this.state.dob).split('-');
-            end = moment(`${dobString[2]  }0${  dobString[1]  }${dobString[0]}`);
+            end = moment(`${dobString[2]}0${dobString[1]}${dobString[0]}`);
         }
         const duration = moment.duration(now.diff(end));
         const days = duration.asDays();
@@ -92,9 +97,9 @@ export default class EditIndividual extends React.Component {
                 const AgeMonths = Math.floor(parseInt(householdObj.AgeDays) / 30.4368);
                 if (AgeMonths > 8 && AgeMonths < 60) {
                     householdObj.Category = 'A';
-                }                else if (AgeMonths > 59 && AgeMonths < 180) {
+                } else if (AgeMonths > 59 && AgeMonths < 180) {
                     householdObj.Category = 'B';
-                }                else if (AgeMonths > 179 && AgeMonths < 600 && householdObj.Sex === 'F') {
+                } else if (AgeMonths > 179 && AgeMonths < 600 && householdObj.Sex === 'F') {
                     householdObj.Category = 'C';
                 }
                 householdObj.AgeMonths = AgeMonths;
@@ -103,7 +108,7 @@ export default class EditIndividual extends React.Component {
                 realm.create('Household', householdObj, true);
             });
             navigate('ViewCluster');
-        }        else {
+        } else {
             alert('Mandatory fields cannot be left empty');
         }
     }

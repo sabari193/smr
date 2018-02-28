@@ -414,10 +414,13 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
+                const dayV = `0${day}`.slice('-2');
+                const monthV = `0${month + 1}`.slice('-2');
+
                 if (value === 'c9adobdt') {
                     const newState = {};
-                    newState[value] = `${day}-${month + 1}-${year}`;
-                    newState.selectedDate = `${year}${month + 1}${day}`;
+                    newState[value] = `${dayV}-${monthV}-${year}`;
+                    newState.selectedDate = `${year}${monthV}${dayV}`;
                     this.setState(newState);
                     const AgeDays = Math.floor(this.getAgeDays(this.state.c9adobdt));
                     const AgeMonths = Math.floor(parseInt(AgeDays) / 30.4368);
@@ -442,7 +445,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                     }
                 } else {
                     const newState = {};
-                    newState[value] = `${day}-${month + 1}-${year}`;
+                    newState[value] = `${dayV}-${monthV}-${year}`;
                     this.setState(newState);
                 }
             }

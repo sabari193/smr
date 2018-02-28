@@ -49,7 +49,12 @@ export default class AddIndividualScreen extends React.Component {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
+                const dayV = `0${day}`.slice('-2');
+                const monthV = `0${month + 1}`.slice('-2');
+                this.setState({
+                    dob: `${dayV}-${monthV}-${year}`,
+                    selectedDate: `${year}${monthV}${dayV}`
+                });
             }
         } catch ({ code, message }) {
             console.log('Cannot open date picker', message);
@@ -65,6 +70,10 @@ export default class AddIndividualScreen extends React.Component {
     }
 
     componentDidMount() {
+
+    }
+
+    async getLocationDetails() {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
                 console.log('position.coords.accuracy', position.coords.accuracy);
@@ -80,6 +89,7 @@ export default class AddIndividualScreen extends React.Component {
     }
 
     saveIndividual() {
+        // this.getLocationDetails().then(() => {
         const { navigate } = this.props.navigation;
         const { params } = this.props.navigation.state;
         const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
@@ -125,6 +135,7 @@ export default class AddIndividualScreen extends React.Component {
         } else {
             alert('Mandatory fields cannot be left empty');
         }
+        //});
     }
     render() {
         const { params } = this.props.navigation.state;

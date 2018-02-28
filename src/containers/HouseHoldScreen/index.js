@@ -176,7 +176,7 @@ export default class HouseHoldScreen extends React.Component {
     const idList = _.map(JSON.parse(JSON.stringify(this.state.personList)), 'id');
     realm.write(() => {
       for (let i = 0; i < idList.length; i++) {
-        realm.create('Household', { id: idList[i], Submitted: 'inprogress', HouseholdPrimary }, true);
+        realm.create('Household', { id: idList[i], Submitted: 'inprogress', HouseholdPrimary, latitude: this.state.latitude, longitude: this.state.longitude, accuracy: this.state.accuracy }, true);
       }
       const householdDetails = realm.objects('Household').filtered('Submitted="inprogress" AND HouseholdStatus!="1" AND HouseholdStatus!= "2" AND HouseholdID=$0', this.state.HouseholdID);
       realm.delete(householdDetails);

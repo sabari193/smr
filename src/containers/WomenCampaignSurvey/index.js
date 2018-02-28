@@ -42,7 +42,9 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ w3adobdt: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
+                const dayV = `0${day}`.slice('-2');
+                const monthV = `0${month + 1}`.slice('-2');
+                this.setState({ w3adobdt: `${dayV}-${monthV + 1}-${year}`, selectedDate: `${year}${monthV}${dayV}` });
                 const AgeDays = Math.floor(this.getAgeDays(this.state.w3adobdt));
                 const AgeMonths = Math.floor(parseInt(AgeDays) / 30.4368);
                 if (AgeMonths > 179 && AgeMonths < 600) {
@@ -416,7 +418,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         console.log('this.isFormValid()', this.isFormValid());
         console.log('error', this.getErrorMessages());
         console.log('RadioValidations.includes(false)', _.includes(_.values(RadioValidations), false));
-        /* if (this.isFormValid()) {
+        if (this.isFormValid() && !(_.includes(_.values(RadioValidations), false))) {
             this.setState({
                 h1hhid: params.HouseholdID,
                 updatedTime: moment().format('MM-DD-YYY h:mm:ss a')
@@ -447,7 +449,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 ],
                 { cancelable: false }
             );
-        } */
+        }
     }
     addBloodSampleCount() {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;

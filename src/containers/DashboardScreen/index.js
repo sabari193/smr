@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Alert, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import _ from 'lodash';
 import { ProfileMenuHeader, colors } from '../../components/PocketUI/index';
 import realm from '../../providers/realm';
@@ -17,7 +17,8 @@ export default class DashboardScreen extends React.Component {
       TypeB: 0,
       TypeC: 0,
       clusterPrimaryID: '',
-      surveyDetails: []
+      surveyDetails: [],
+      loading: false
     };
   }
   async loadCategoryDetails() {
@@ -52,6 +53,7 @@ export default class DashboardScreen extends React.Component {
         {
           text: 'OK',
           onPress: () => {
+            this.setState({ loading: true });
             realm.write(() => {
               const householdDetails = JSON.parse(JSON.stringify(realm.objects('Household')));
               _.forEach(householdDetails, (house) => {
@@ -72,6 +74,7 @@ export default class DashboardScreen extends React.Component {
                 const bloodsampleid = realm.objects('BloodSample').filtered('Submitted="active" || Submitted="completed" && clusterID=$0', this.state.clusterID)[0].id;
                 realm.create('BloodSample', { id: bloodsampleid, Submitted: 'deleted' }, true);
               }
+              this.setState({ loading: false });
               this.navigateToSignIn();
             });
           }
@@ -111,6 +114,9 @@ export default class DashboardScreen extends React.Component {
     return (
       <View style={{ backgroundColor: '#fff', flex: 1 }}>
         <ScrollView>
+          {this.state.loading &&
+            <ActivityIndicator size="large" color="#0000ff" />
+          }
           {(this.state.clusterID) &&
             <ProfileMenuHeader
               headingIcon="IMRVI"
@@ -148,7 +154,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 50,
     textAlign: 'center',
-    color: 'green'
   },
   headingLetter2: {
     color: '#3E4A59',
@@ -157,6 +162,15 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 10,
     textAlign: 'center',
-    color: 'red'
+  },
+  headingLetterMain: {
+    color: '#3E4A59',
+    fontWeight: '800',
+    fontSize: 30,
+    marginLeft: 15,
+    marginTop: 10,
+    marginBottom: 30,
+    flex: 1,
+    textAlign: 'center'
   }
 });
