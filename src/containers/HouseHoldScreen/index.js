@@ -21,7 +21,7 @@ export default class HouseHoldScreen extends React.Component {
       HouseholdStatus6: false,
       HouseholdID: '',
       HouseholdStatus: '1',
-      HouseholdStatusValue: 'Complete',
+      HouseholdStatusValue: 'Complete, verbal assent provided',
       personList: [],
       clusterID: '',
       villageName: '',
