@@ -17,6 +17,7 @@
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-form-validator": "^0.2.0",
+    "react-native-fs": "^2.9.11",
     "react-native-simple-radio-button": "^2.7.1",
     "react-native-smart-splash-screen": "^2.3.5",
     "react-native-table-component": "^1.1.3",
