@@ -42,7 +42,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ w3adobdt: `${day}-${month + 1}-${year}`, selectedDate: `${year}0${month + 1}${day}` });
+                this.setState({ w3adobdt: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
                 const AgeDays = Math.floor(this.getAgeDays(this.state.w3adobdt));
                 const AgeMonths = Math.floor(parseInt(AgeDays) / 30.4368);
                 if (AgeMonths > 179 && AgeMonths < 600) {
@@ -248,6 +248,84 @@ export default class WomenCampaignSurvey extends ValidationComponent {
         this.setState({ surveyType, clusterID });
     }
 
+    checkValidationField(fieldName, validation) {
+        if (!this.state[fieldName] || (this.state[fieldName] === -1)) {
+            if (this.state[fieldName] === 0) {
+                validation[fieldName] = true;
+            } else {
+                validation[fieldName] = false;
+            }
+        } else {
+            validation[fieldName] = true;
+        }
+    }
+
+    validateRadioOptions() {
+        const validation = [];
+        const otherStateFields = ['editedField', 'eligible', 'w2name',
+            'w4age', 'w11intcomment', 'ws1bscollectoth', 'ws6asprobsp', 'ws7bdcollectoth',
+            'ws13adprobsp', 'ws15intcomments'];
+        if (this.state.w2aconsent) {
+            if (this.state.w2aconsent === '01') {
+                this.checkValidationField('w3dob', validation);
+                if (!this.state.eligible) {
+                    _.forEach(_.keys(this.state), (fieldKey) => {
+                        validation[fieldKey] = true;
+                    });
+                } else {
+                    const generalOptions = ['w5maritalstat', 'w9mrvaxhistory'];
+                    _.forEach(generalOptions, (fieldKey) => {
+                        this.checkValidationField(fieldKey, validation);
+                    });
+
+                    if (this.state.surveyType === '02') {
+                        const surveyTypeOptions = ['w7livehhcampaign', 'w8mrcampaigndose'];
+                        _.forEach(surveyTypeOptions, (fieldKey) => {
+                            this.checkValidationField(fieldKey, validation);
+                        });
+                    } else {
+                        validation.w7livehhcampaign = validation.w8mrcampaigndose = true;
+                    }
+                    if (this.state.w2aconsent === '01') {
+                        if (this.state.ws1scollect === '01') {
+                            const capillarSampleCollected = ['ws1scollecthow', 'ws5squal', 'ws6sproblem'];
+                            _.forEach(capillarSampleCollected, (fieldKey) => {
+                                this.checkValidationField(fieldKey, validation);
+                            });
+                        } else if (this.state.ws1scollect === '02') {
+                            this.checkValidationField('ws1ascollectno', validation);
+                        } else {
+                            validation.ws1scollect = false;
+                        }
+                        if (this.state.ws7dcollect === '01') {
+                            const capillarSampleCollected = ['ws11dspots', 'ws12adqual1', 'ws12adqual2',
+                                'ws12adqual3', 'ws12adqual4', 'ws12adqual5', 'ws13dproblem'];
+                            _.forEach(capillarSampleCollected, (fieldKey) => {
+                                this.checkValidationField(fieldKey, validation);
+                            });
+                        } else if (this.state.ws7dcollect === '02') {
+                            this.checkValidationField('ws7adcollectno', validation);
+                        } else {
+                            validation.ws7dcollect = false;
+                        }
+                    } else {
+                        _.forEach(Object.keys(this.state), (fieldKey) => {
+                            validation[fieldKey] = true;
+                        });
+                    }
+                }
+            } else {
+                _.forEach(Object.keys(this.state), (fieldKey) => {
+                    validation[fieldKey] = true;
+                });
+            }
+        } else {
+            validation.w2aconsent = false;
+        }
+        console.log('validation', validation);
+        return validation;
+    }
+
     componentDidMount() {
         navigator.geolocation.getCurrentPosition(
             async (position) => {
@@ -276,49 +354,69 @@ export default class WomenCampaignSurvey extends ValidationComponent {
             this.validate({
                 w11intcomments: { required: true }
             });
+            if (this.state.w3dob === '01') {
+                this.validate({
+                    w2name: { required: true }
+                });
+            }
+            if (this.state.w3dob === '02') {
+                this.validate({
+                    w4age: { required: true }
+                });
+            }
+            if (this.state.eligible) {
+                if (this.state.w5maritalstat && this.state.w5maritalstat !== '02') {
+                    this.validate({
+                        w6children: { required: true }
+                    });
+                }
+                if (this.state.ws1scollect === '01') {
+                    if (this.state.ws6sproblem === '99') {
+                        this.validate({
+                            ws6asprobsp: { required: true }
+                        });
+                    }
+                    this.validate({
+                        ws15intcomments: { required: true }
+                    });
+                }
+                if (this.state.ws1scollect === '02') {
+                    if (this.state.ws1ascollectno === '99') {
+                        this.validate({
+                            ws1bscollectoth: { required: true }
+                        });
+                    }
+                    this.validate({
+                        ws15intcomments: { required: true }
+                    });
+                }
+                if (this.state.ws7dcollect === '02') {
+                    if (this.state.ws7adcollectno === '99') {
+                        this.validate({
+                            ws7bdcollectoth: { required: true }
+                        });
+                    }
+                }
+                if (this.state.ws7dcollect === '01') {
+                    if (this.state.ws13dproblem === '99') {
+                        this.validate({
+                            ws13adprobsp: { required: true }
+                        });
+                    }
+                }
+            } else {
+
+            }
         }
-        if (this.state.w3dob === '01') {
-            this.validate({
-                w2name: { required: true }
-            });
-        }
-        if (this.state.w3dob === '02') {
-            this.validate({
-                w4age: { required: true }
-            });
-        }
-        if (this.state.w5maritalstat && this.state.w5maritalstat !== '02') {
-            this.validate({
-                w6children: { required: true }
-            });
-        }
-        if (this.state.ws6sproblem === '99') {
-            this.validate({
-                ws6asprobsp: { required: true }
-            });
-        }
-        if (this.state.ws1ascollectno === '99') {
-            this.validate({
-                ws1bscollectoth: { required: true }
-            });
-        }
-        if (this.state.ws7adcollectno === '99') {
-            this.validate({
-                ws7bdcollectoth: { required: true }
-            });
-        }
-        if (this.state.ws13dproblem === '99') {
-            this.validate({
-                ws13adprobsp: { required: true }
-            });
-        }
-        if (this.state.eligible && this.state.w2aconsent === '01') {
-            this.validate({
-                ws15intcomments: { required: true }
-            });
-        }
-        console.log('error message', this.getErrorMessages());
-        if (this.isFormValid()) {
+
+
+        const RadioValidations = this.validateRadioOptions();
+        console.log('RadioValidations', RadioValidations);
+
+        console.log('this.isFormValid()', this.isFormValid());
+        console.log('error', this.getErrorMessages());
+        console.log('RadioValidations.includes(false)', _.includes(_.values(RadioValidations), false));
+        /* if (this.isFormValid()) {
             this.setState({
                 h1hhid: params.HouseholdID,
                 updatedTime: moment().format('MM-DD-YYY h:mm:ss a')
@@ -349,7 +447,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                 ],
                 { cancelable: false }
             );
-        }
+        } */
     }
     addBloodSampleCount() {
         const clusterID = realm.objects('Cluster').filtered('status = "active"')[0].clusterID;
@@ -413,7 +511,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                         formHorizontal={false}
                         labelHorizontal
                         radio_props={this.optionListConsent}
-                        initial={this.state.w2aconsentindex ? this.state.w2aconsentindex : -1}
+                        initial={this.state.w2aconsentindex === 0 ? 0 : (this.state.w2aconsentindex ? this.state.w2aconsentindex : -1)}
                         onPress={(value, index) => { this.setState({ w2aconsent: value, w2aconsentindex: index }); console.log(this.state); }}
                     />
                 </View>
@@ -429,7 +527,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                 formHorizontal={false}
                                 labelHorizontal
                                 radio_props={this.optionListBoolean}
-                                initial={this.w3dobindex ? this.w3dobindex : -1}
+                                initial={this.state.w3dobindex === 0 ? 0 : (this.state.w3dobindex ? this.state.w3dobindex : -1)}
                                 onPress={(value, index) => {
                                     this.setState({ w3dob: value, w3adobdt: '', w4age: '', w3dobindex: index, eligible: true });
                                 }}
@@ -457,7 +555,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                     value={this.state.w4age}
                                     onChangeText={(w4age) => this.setState({ w4age })}
                                     onBlur={() => {
-                                        const AgeMonths = Math.floor(Math.floor(this.state.age * 365.25) / 30.4368);
+                                        const AgeMonths = Math.floor((this.state.w4age * 365.25) / 30.4368);
                                         if (AgeMonths > 179 && AgeMonths < 600) {
                                             this.setState({
                                                 eligible: true
@@ -483,7 +581,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         formHorizontal={false}
                                         labelHorizontal
                                         radio_props={this.maritalStatus}
-                                        initial={this.state.w5maritalstatindex ? this.state.w5maritalstatindex : -1}
+                                        initial={this.state.w5maritalstatindex === 0 ? 0 : (this.state.w5maritalstatindex ? this.state.w5maritalstatindex : -1)}
                                         onPress={(value, index) => { this.setState({ w5maritalstat: value, w5maritalstatindex: index }); console.log(this.state); }}
                                     />
                                 </View>
@@ -511,7 +609,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.optionListBoolean}
-                                                initial={this.state.w7livehhcampaignindex ? this.state.w7livehhcampaignindex : -1}
+                                                initial={this.state.w7livehhcampaignindex === 0 ? 0 : (this.state.w7livehhcampaignindex ? this.state.w7livehhcampaignindex : -1)}
                                                 onPress={(value, index) => { this.setState({ w7livehhcampaign: value, w7livehhcampaignindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -525,7 +623,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.mrdoseoptions}
-                                                initial={this.state.w8mrcampaigndoseindex}
+                                                initial={this.state.w8mrcampaigndoseindex === 0 ? 0 : (this.state.w8mrcampaigndoseindex ? this.state.w8mrcampaigndoseindex : -1)}
                                                 onPress={(value, index) => { this.setState({ w8mrcampaigndose: value, w8mrcampaigndoseindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -541,7 +639,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         formHorizontal={false}
                                         labelHorizontal
                                         radio_props={this.optionList}
-                                        initial={this.state.w9mrvaxhistoryindex}
+                                        initial={this.state.w9mrvaxhistoryindex === 0 ? 0 : (this.state.w9mrvaxhistoryindex ? this.state.w9mrvaxhistoryindex : -1)}
                                         onPress={(value, index) => { this.setState({ w9mrvaxhistory: value, w9mrvaxhistoryindex: index }); console.log(this.state); }}
                                     />
                                 </View>
@@ -574,7 +672,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         formHorizontal={false}
                                         labelHorizontal
                                         radio_props={this.optionListBoolean}
-                                        initial={this.state.ws1scollectindex ? this.state.ws1scollectindex : 1}
+                                        initial={this.state.ws1scollectindex === 0 ? 0 : (this.state.ws1scollectindex ? this.state.ws1scollectindex : -1)}
                                         onPress={(value, index) => {
                                             this.setState({ ws1scollect: value, ws1scollectindex: index });
                                             if (value === '01') {
@@ -598,7 +696,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.bloodreasonoptions}
-                                                initial={this.state.ws1ascollectnoindex ? this.state.ws1ascollectnoindex : -1}
+                                                initial={this.state.ws1ascollectnoindex === 0 ? 0 : (this.state.ws1ascollectnoindex ? this.state.ws1ascollectnoindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws1ascollectno: value, ws1ascollectnoindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -628,7 +726,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.specimenmethodoptions}
-                                                initial={this.state.ws1scollecthowindex ? this.state.ws1scollecthowindex : -1}
+                                                initial={this.state.ws1scollecthowindex === 0 ? 0 : (this.state.ws1scollecthowindex ? this.state.ws1scollecthowindex : -1)}
                                                 onPress={(value, index) => {
                                                     this.setState({ ws1scollecthow: value, ws1scollecthowindex: index });
                                                     if (value === '01' || value === '02') {
@@ -651,7 +749,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.specimenqualityoptions}
-                                                initial={this.state.ws5squalindex ? this.state.ws5squalindex : -1}
+                                                initial={this.state.ws5squalindex === 0 ? 0 : (this.state.ws5squalindex ? this.state.ws5squalindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws5squal: value, ws5squalindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -666,7 +764,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.specimenproblemoptions}
-                                                initial={this.state.ws6sproblemindex ? this.state.ws6sproblemindex : -1}
+                                                initial={this.state.ws6sproblemindex === 0 ? 0 : (this.state.ws6sproblemindex ? this.state.ws6sproblemindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws6sproblem: value, ws6sproblemindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -693,7 +791,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         formHorizontal={false}
                                         labelHorizontal
                                         radio_props={this.dbssampleoptions}
-                                        initial={this.state.ws7dcollectindex ? this.state.ws7dcollectindex : -1}
+                                        initial={this.state.ws7dcollectindex === 0 ? 0 : (this.state.ws7dcollectindex ? this.state.ws7dcollectindex : -1)}
                                         onPress={(value, index) => {
                                             this.setState({ ws7dcollect: value, ws7dcollectindex: index });
                                             if (value === '01') {
@@ -704,7 +802,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                         }}
                                     />
                                 </View>
-                                {this.state.ws7dcollect !== '01' &&
+                                {this.state.ws7dcollect === '02' &&
                                     <View>
                                         <View style={{ marginBottom: 20, borderBottomWidth: 1, borderBottomColor: '#000', paddingBottom: 10 }}>
                                             <Text style={styles.headingLetter}>7A. Specify reason?</Text>
@@ -716,7 +814,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.bloodreasonoptions}
-                                                initial={this.state.ws7adcollectnoindex ? this.state.ws7adcollectnoindex : -1}
+                                                initial={this.state.ws7adcollectnoindex === 0 ? 0 : (this.state.ws7adcollectnoindex ? this.state.ws7adcollectnoindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws7adcollectno: value, ws7adcollectnoindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -745,7 +843,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.spotsCollectedoptions}
-                                                initial={this.state.ws11dspotsindex ? this.state.ws11dspotsindex : -1}
+                                                initial={this.state.ws11dspotsindex === 0 ? 0 : (this.state.ws11dspotsindex ? this.state.ws11dspotsindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws11dspots: value, ws11dspotsindex: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -760,7 +858,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.adequateoptions}
-                                                initial={this.state.ws12adqual1index ? this.state.ws12adqual1index : -1}
+                                                initial={this.state.ws12adqual1index === 0 ? 0 : (this.state.ws12adqual1index ? this.state.ws12adqual1index : -1)}
                                                 onPress={(value, index) => { this.setState({ ws12adqual1: value, ws12adqual1index: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -775,7 +873,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.adequateoptions}
-                                                initial={this.state.ws12adqual2index ? this.state.ws12adqual2index : -1}
+                                                initial={this.state.ws12adqual2index === 0 ? 0 : (this.state.ws12adqual2index ? this.state.ws12adqual2index : -1)}
                                                 onPress={(value, index) => { this.setState({ ws12adqual2: value, ws12adqual2index: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -790,7 +888,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.adequateoptions}
-                                                initial={this.state.ws12adqual3index ? this.state.ws12adqual3index : -1}
+                                                initial={this.state.ws12adqual3index === 0 ? 0 : (this.state.ws12adqual3index ? this.state.ws12adqual3index : -1)}
                                                 onPress={(value, index) => { this.setState({ ws12adqual3: value, ws12adqual3index: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -805,7 +903,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.adequateoptions}
-                                                initial={this.state.ws12adqual4index ? this.state.ws12adqual4 : 0}
+                                                initial={this.state.ws12adqual4index === 0 ? 0 : (this.state.ws12adqual4index ? this.state.ws12adqual4index : -1)}
                                                 onPress={(value, index) => { this.setState({ ws12adqual4: value, ws12adqual4index: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -820,7 +918,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.adequateoptions}
-                                                initial={this.state.ws12adqual5index ? this.state.ws12adqual5index : -1}
+                                                initial={this.state.ws12adqual5index === 0 ? 0 : (this.state.ws12adqual5index ? this.state.ws12adqual5index : -1)}
                                                 onPress={(value, index) => { this.setState({ ws12adqual5: value, ws12adqual5index: index }); console.log(this.state); }}
                                             />
                                         </View>
@@ -835,7 +933,7 @@ export default class WomenCampaignSurvey extends ValidationComponent {
                                                 formHorizontal={false}
                                                 labelHorizontal
                                                 radio_props={this.dbsspecimenproblemoptions}
-                                                initial={this.state.ws13dproblemindex ? this.state.ws13dproblemindex : -1}
+                                                initial={this.state.ws13dproblemindex === 0 ? 0 : (this.state.ws13dproblemindex ? this.state.ws13dproblemindex : -1)}
                                                 onPress={(value, index) => { this.setState({ ws13dproblem: value, ws13dproblemindex: index }); console.log(this.state); }}
                                             />
                                         </View>

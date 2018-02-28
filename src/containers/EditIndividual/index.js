@@ -21,17 +21,15 @@ export default class EditIndividual extends React.Component {
             age: params.person.Age,
             selectedDate: '',
             id: params.person.id
-        }
+        };
         this.gender_option = [
             { label: 'Male', value: 'M' },
             { label: 'Female', value: 'F' }
-        ]
+        ];
         this.availability_option = [
             { label: 'Yes', value: true },
             { label: 'No', value: false }
-        ]
-
-
+        ];
     }
 
     static navigationOptions = {
@@ -48,9 +46,9 @@ export default class EditIndividual extends React.Component {
             const { action, year, month, day } = await DatePickerAndroid.open({
                 date: this.state.dobStatus ? new Date(this.state.dob) : new Date(),
                 maxDate: new Date()
-            })
+            });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}0${month + 1}${day}` });
+                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
             }
         } catch ({ code, message }) {
             console.log('Cannot open date picker', message);
@@ -58,17 +56,16 @@ export default class EditIndividual extends React.Component {
     }
 
     getAgeDays() {
-        let now = moment();
+        const now = moment();
         let end;
         if (this.state.selectedDate) {
             end = moment(this.state.selectedDate);
+        }        else {
+            const dobString = String(this.state.dob).split('-');
+            end = moment(`${dobString[2]  }0${  dobString[1]  }${dobString[0]}`);
         }
-        else {
-            let dobString = String(this.state.dob).split('-');
-            end = moment(dobString[2] + '0' + dobString[1] + dobString[0]);
-        }
-        let duration = moment.duration(now.diff(end));
-        let days = duration.asDays();
+        const duration = moment.duration(now.diff(end));
+        const days = duration.asDays();
         return days;
     }
 
@@ -90,31 +87,25 @@ export default class EditIndividual extends React.Component {
                 clusterID: params.clusterInfo[0].clusterID,
                 AgeMonths: 0,
                 UpdatedTime: moment().format('DD-MM-YYYY h:mm:ss a')
-            }
+            };
             if (this.state.availability) {
-                let AgeMonths = Math.floor(parseInt(householdObj['AgeDays']) / 30.4368)
+                const AgeMonths = Math.floor(parseInt(householdObj.AgeDays) / 30.4368);
                 if (AgeMonths > 8 && AgeMonths < 60) {
-                    householdObj['Category'] = 'A';
+                    householdObj.Category = 'A';
+                }                else if (AgeMonths > 59 && AgeMonths < 180) {
+                    householdObj.Category = 'B';
+                }                else if (AgeMonths > 179 && AgeMonths < 600 && householdObj.Sex === 'F') {
+                    householdObj.Category = 'C';
                 }
-                else if (AgeMonths > 59 && AgeMonths < 180) {
-                    householdObj['Category'] = 'B';
-                }
-                else if (AgeMonths > 179 && AgeMonths < 600 && householdObj['Sex'] === 'F') {
-                    householdObj['Category'] = 'C';
-                }
-                householdObj['AgeMonths'] = AgeMonths;
+                householdObj.AgeMonths = AgeMonths;
             }
             realm.write(() => {
                 realm.create('Household', householdObj, true);
             });
             navigate('ViewCluster');
-
-
-        }
-        else {
+        }        else {
             alert('Mandatory fields cannot be left empty');
         }
-
     }
     render() {
         const { params } = this.props.navigation.state;
@@ -129,7 +120,8 @@ export default class EditIndividual extends React.Component {
                         <Text style={styles.headingLetter}>Name*</Text>
                         <FormInput
                             value={this.state.name}
-                            onChangeText={(name) => this.setState({ name: name })} />
+                            onChangeText={(name) => this.setState({ name })}
+                        />
                     </View>
                     <View style={{ marginBottom: 20 }}>
                         <Text style={styles.headingLetter}>Do you know DOB ?</Text>
@@ -138,8 +130,8 @@ export default class EditIndividual extends React.Component {
                             style={{ margin: 20 }}
                             labelStyle={{ fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
                             buttonColor={'#4B5461'}
-                            formHorizontal={true}
-                            labelHorizontal={true}
+                            formHorizontal
+                            labelHorizontal
                             radio_props={this.availability_option}
                             initial={this.state.dobStatus ? 0 : 1}
                             onPress={(value) => { this.setState({ dobStatus: value, dob: '', age: '' }); }}
@@ -151,7 +143,7 @@ export default class EditIndividual extends React.Component {
                             <FormInput
                                 value={this.state.dob}
                                 onFocus={() => {
-                                    this.openDatePicker()
+                                    this.openDatePicker();
                                 }
                                 }
 
@@ -164,7 +156,8 @@ export default class EditIndividual extends React.Component {
                             <FormInput
                                 keyboardType='numeric'
                                 value={this.state.age}
-                                onChangeText={(age) => this.setState({ age: age })} />
+                                onChangeText={(age) => this.setState({ age })}
+                            />
                         </View>
                     }
                     <View style={{ marginBottom: 20 }}>
@@ -173,11 +166,11 @@ export default class EditIndividual extends React.Component {
                             style={{ margin: 20 }}
                             labelStyle={{ fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
                             buttonColor={'#4B5461'}
-                            formHorizontal={true}
-                            labelHorizontal={true}
+                            formHorizontal
+                            labelHorizontal
                             radio_props={this.gender_option}
                             initial={this.state.Sex == 'M' ? 0 : 1}
-                            onPress={(value) => { this.setState({ Sex: value }); console.log(this.state) }}
+                            onPress={(value) => { this.setState({ Sex: value }); console.log(this.state); }}
                         />
                     </View>
                     <View style={{ marginBottom: 20 }}>
@@ -187,11 +180,11 @@ export default class EditIndividual extends React.Component {
                             style={{ margin: 20 }}
                             labelStyle={{ fontSize: 20, fontWeight: 'bold', marginRight: 40, color: '#4B5461' }}
                             buttonColor={'#4B5461'}
-                            formHorizontal={true}
-                            labelHorizontal={true}
+                            formHorizontal
+                            labelHorizontal
                             radio_props={this.availability_option}
                             initial={this.state.availability ? 0 : 1}
-                            onPress={(value) => { this.setState({ availability: value }); console.log(this.state) }}
+                            onPress={(value) => { this.setState({ availability: value }); console.log(this.state); }}
                         />
                     </View>
                     <Button

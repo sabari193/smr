@@ -417,7 +417,7 @@ export default class ChildCampaignSurvey extends ValidationComponent {
                 if (value === 'c9adobdt') {
                     const newState = {};
                     newState[value] = `${day}-${month + 1}-${year}`;
-                    newState.selectedDate = `${year}0${month + 1}${day}`;
+                    newState.selectedDate = `${year}${month + 1}${day}`;
                     this.setState(newState);
                     const AgeDays = Math.floor(this.getAgeDays(this.state.c9adobdt));
                     const AgeMonths = Math.floor(parseInt(AgeDays) / 30.4368);

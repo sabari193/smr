@@ -49,7 +49,7 @@ export default class AddIndividualScreen extends React.Component {
                 maxDate: new Date()
             });
             if (action !== DatePickerAndroid.dismissedAction) {
-                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}0${month + 1}${day}` });
+                this.setState({ dob: `${day}-${month + 1}-${year}`, selectedDate: `${year}${month + 1}${day}` });
             }
         } catch ({ code, message }) {
             console.log('Cannot open date picker', message);

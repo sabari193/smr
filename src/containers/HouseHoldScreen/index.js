@@ -1,9 +1,9 @@
 import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Icon } from 'react-native';
+import { StyleSheet, View, Text, ScrollView, ActivityIndicator } from 'react-native';
 import _ from 'lodash';
 import moment from 'moment';
 import {
-  colors, FormRow, List, Button, ListItem,
+  colors, Button,
   WalletHeader, RadioButton, Divider, FormInput
 } from '../../components/PocketUI/index';
 import realm from '../../providers/realm';
@@ -27,7 +27,8 @@ export default class HouseHoldScreen extends React.Component {
       villageName: '',
       accuracy: 0,
       latitude: 0,
-      longitude: 0
+      longitude: 0,
+      loading: false
     };
   }
   static navigationOptions = ({ navigation, navigate }) => {
@@ -60,7 +61,7 @@ export default class HouseHoldScreen extends React.Component {
 
   componentWillMount() {
     const { params = {} } = this.props.navigation.state;
-    const clusterInfo = JSON.parse(JSON.stringify(realm.objects('Cluster').filtered('status="active"')));
+    const clusterInfo = realm.objects('Cluster').filtered('status="active"');
     this.props.navigation.setParams({ handleSave: this._handleSave.bind(this), goHome: this._goHome.bind(this) });
     let HouseholdNumber = '';
     if (!params.HouseholdID) {
@@ -70,8 +71,11 @@ export default class HouseHoldScreen extends React.Component {
       } else {
         const completedhouseholdData = realm.objects('HouseholdNumber').filtered('Submitted !="active"AND clusterID=$0', clusterInfo[0].clusterID);
         if (completedhouseholdData.length > 0) {
-          const values = _.values(JSON.parse(JSON.stringify(completedhouseholdData)));
-          HouseholdNumber = String(parseInt(_.maxBy(values, 'HouseholdID').HouseholdID) + 1);
+          const householdArray = [];
+          _.forEach(completedhouseholdData, (value) => {
+            householdArray.push(parseInt(value.HouseholdID));
+          });
+          HouseholdNumber = String(_.maxBy(householdArray) + 1);
         } else {
           HouseholdNumber = '1';
         }
@@ -104,60 +108,66 @@ export default class HouseHoldScreen extends React.Component {
     });
   }
   componentDidMount() {
+
+  }
+  _goHome() {
+    const { navigate } = this.props.navigation;
+    navigate('Dashboard');
+  }
+  async getLocationData() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
-        console.log('position.coords.accuracy', position.coords.accuracy);
         this.setState({
           accuracy: position.coords.accuracy,
           latitude: position.coords.latitude,
           longitude: position.coords.longitude
         });
       },
-      (error) => console.log('location is not available'),
+      (error) => this.setState({ loading: false }),
       { enableHighAccuracy: false, timeout: 30000 }
     );
   }
-  _goHome() {
-    const { navigate } = this.props.navigation;
-    navigate('Dashboard');
-  }
   _handleSave() {
     const { navigate } = this.props.navigation;
-    if (this.state.HouseholdStatus !== '1') {
-      if (this.state.HouseholdStatus !== '2') {
-        const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
-        const householdObj = {
-          id: `${this.state.HouseholdID}${new Date().getTime()}`,
-          HouseholdPrimary,
-          HouseholdID: this.state.HouseholdID,
-          HouseholdStatus: this.state.HouseholdStatus,
-          Name: '',
-          KnowDOB: false,
-          DOB: '',
-          AgeDays: '',
-          Age: '',
-          Sex: '',
-          IsPersonAvailable: false,
-          Submitted: 'inprogress',
-          HouseholdStatusValue: this.state.HouseholdStatusValue,
-          clusterID: this.state.clusterID,
-          UpdatedTime: moment().format('MM-DD-YYYY h:mm:ss a'),
-          latitude: this.state.latitude,
-          longitude: this.state.longitude,
-          accuracy: this.state.accuracy
-        };
-        realm.write(() => {
-          realm.delete(realm.objects('Household').filtered('HouseholdID=$0', this.state.HouseholdID));
-          realm.create('Household', householdObj);
-          realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
-        });
-        navigate('Dashboard');
+    this.setState({ loading: true });
+    this.getLocationData().then(() => {
+      if (this.state.HouseholdStatus !== '1') {
+        if (this.state.HouseholdStatus !== '2') {
+          const HouseholdPrimary = Math.floor(Math.random() * 10000000000) + new Date().getTime();
+          const householdObj = {
+            id: `${this.state.HouseholdID}${new Date().getTime()}`,
+            HouseholdPrimary,
+            HouseholdID: this.state.HouseholdID,
+            HouseholdStatus: this.state.HouseholdStatus,
+            Name: '',
+            KnowDOB: false,
+            DOB: '',
+            AgeDays: '',
+            Age: '',
+            Sex: '',
+            IsPersonAvailable: false,
+            Submitted: 'inprogress',
+            HouseholdStatusValue: this.state.HouseholdStatusValue,
+            clusterID: this.state.clusterID,
+            UpdatedTime: moment().format('MM-DD-YYYY h:mm:ss a'),
+            latitude: this.state.latitude,
+            longitude: this.state.longitude,
+            accuracy: this.state.accuracy
+          };
+          realm.write(() => {
+            realm.delete(realm.objects('Household').filtered('HouseholdID=$0', this.state.HouseholdID));
+            realm.create('Household', householdObj);
+            realm.create('HouseholdNumber', { HouseholdStatus: this.state.HouseholdStatus, HouseholdID: this.state.HouseholdID, HouseholdPrimary, Submitted: 'inprogress', clusterID: this.state.clusterID });
+          });
+          //this.setState({ loading: false });
+          navigate('Dashboard');
+        } else {
+          this.savehouseholdInformation();
+        }
       } else {
         this.savehouseholdInformation();
       }
-    } else {
-      this.savehouseholdInformation();
-    }
+    });
   }
 
   savehouseholdInformation() {
@@ -175,6 +185,7 @@ export default class HouseHoldScreen extends React.Component {
     this.setState({
       personList: []
     });
+    //this.setState({ loading: false });
     navigate('Dashboard');
   }
 
@@ -193,6 +204,12 @@ export default class HouseHoldScreen extends React.Component {
       <View style={styles.container}>
         <ScrollView style={{ backgroundColor: 'white' }}>
           <Text style={styles.headingLetterMain}>Household Information</Text>
+          {(this.state.loading) &&
+            <View>
+              <Text style={styles.headingLetterMain}>Saving Household Information</Text>
+              <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+          }
           <Text style={styles.headingLetter}>{`Cluster ID : ${this.state.clusterID} / Village Name : ${this.state.villageName}  `}</Text>
           <View style={{ flex: 2, flexDirection: 'row', alignSelf: 'flex-end' }}>
             <Text style={styles.headingLetter1}>{'Household Number'}</Text>
