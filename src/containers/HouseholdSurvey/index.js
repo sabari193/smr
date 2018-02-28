@@ -324,11 +324,11 @@ export default class HouseHoldSurvey extends ValidationComponent {
                 h22hhmaterothsp: { required: true },
             });
         }
-        /* if (this.state.h32avisits === '01') {
+         if (this.state.h32avisits === '02') {
             this.validate({
-                h22hhmaterothsp: { required: true },
+                h32bdateofvisit: { required: true },
             });
-        } */
+        } 
 
         const RadioValidations = this.validateRadioOptions();
         console.log('RadioValidations', RadioValidations);
@@ -413,7 +413,7 @@ export default class HouseHoldSurvey extends ValidationComponent {
                 {this.state.h6astatusvis1 === '01' &&
                     <View>
                         <View style={{ marginBottom: 20 }}>
-                            <Text style={styles.headingLetter}>4. Respondent to household questionnaire*</Text>
+                            <Text style={styles.headingLetter}>4. Respondent name to household questionnaire*</Text>
                             <FormInput
                                 ref='h8respondentname'
                                 value={this.state.h8respondentname}
