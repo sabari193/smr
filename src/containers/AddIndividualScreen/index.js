@@ -135,14 +135,14 @@ export default class AddIndividualScreen extends React.Component {
                         mainTitle={`Cluster ID : ${params.clusterID} / Village Name : ${params.villageName}`}
                         subTitle={`Household ID : ${params.HouseholdID}`}
                     />
-                    <View style={{ marginBottom: 20 }}>
+                    <View style={{ marginBottom: 15 }}>
                         <Text style={styles.headingLetter}>Name*</Text>
                         <FormInput
                             value={this.state.name}
                             onChangeText={(name) => this.setState({ name })}
                         />
                     </View>
-                    <View style={{ marginBottom: 20 }}>
+                    <View style={{ marginBottom: 15 }}>
                         <Text style={styles.headingLetter}>Do you know DOB ?</Text>
                         <RadioForm
                             animation={false}
@@ -157,7 +157,7 @@ export default class AddIndividualScreen extends React.Component {
                         />
                     </View>
                     {(this.state.dobStatus) &&
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 15 }}>
                             <Text style={styles.headingLetter}>Date of Birth*</Text>
                             <FormInput
                                 value={this.state.dob}
@@ -170,7 +170,7 @@ export default class AddIndividualScreen extends React.Component {
                         </View>
                     }
                     {(!this.state.dobStatus) &&
-                        <View style={{ marginBottom: 20 }}>
+                        <View style={{ marginBottom: 15 }}>
                             <Text style={styles.headingLetter}>Completed Age*</Text>
                             <FormInput
                                 keyboardType='numeric'
@@ -179,7 +179,7 @@ export default class AddIndividualScreen extends React.Component {
                             />
                         </View>
                     }
-                    <View style={{ marginBottom: 20 }}>
+                    <View style={{ marginBottom: 15 }}>
                         <Text style={styles.headingLetter}>Gender</Text>
                         <RadioForm
                             animation={false}
@@ -193,7 +193,7 @@ export default class AddIndividualScreen extends React.Component {
                             onPress={(value) => { this.setState({ Sex: value }); console.log(this.state); }}
                         />
                     </View>
-                    <View style={{ marginBottom: 20 }}>
+                    <View style={{ marginBottom: 15 }}>
                         <Text style={styles.headingLetter}>Availability - Will you be available for next 3-4 days during the survey ?</Text>
                         <RadioForm
                             animation={false}
@@ -208,7 +208,7 @@ export default class AddIndividualScreen extends React.Component {
                         />
                     </View>
                     <Button
-                        buttonStyle={{ marginTop: 30, marginBottom: 30, backgroundColor: '#4c9689' }}
+                        buttonStyle={{ marginTop: 30, marginBottom: 15, backgroundColor: '#4c9689' }}
                         title='Add'
                         onPress={() => this.saveIndividual()}
                     />

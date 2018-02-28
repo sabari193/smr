@@ -89,7 +89,7 @@ class FormInput extends Component {
     }
 
     if (search) {
-      inputStyle.color= '#D3DFEF';
+      inputStyle.color= '#333';
       containerStyle.borderColor= 'transparent';
     }
     
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     // Invariant Violation: Invalid undefined `width` of type `string`
     // supplied to `StyleSheet input`, expected `number`.
     // width: '100%',
-    color: colors.grey3,
+    color: colors.black,
   },
 });
 
